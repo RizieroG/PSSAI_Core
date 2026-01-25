@@ -18,6 +18,7 @@ Il sistema funziona come un self-evaluation **loop**, in grado di:
 ## Table of Contents <!-- omit in toc -->
 
 - [Architettura degli Agent](#architettura-degli-agent)
+- [Flusso di esecuzione (alto livello)](#flusso-di-esecuzione-alto-livello)
 - [Tecniche e Design](#tecniche-e-design)
 - [Riferimenti](#riferimenti)
 
@@ -32,6 +33,18 @@ Ogni Agent svolge un ruolo specifico nel ciclo di generazione:
 | 💻 **Coder**          | Generazione del codice    | `ollama/gavineke/powershell-codex:latest` | Genera lo script PowerShell eseguibile seguendo il piano e mantenendo le invarianti.    |
 | 🔍 **Reviewer**       | Revisione automatica      | `ollama/llama3.1:8b`                      | Analizza il codice e il report JSON di PSScriptAnalyzer, producendo *fix notes* mirate. |
 | ✏️ **Change Planner** | Adattamento post-feedback | `ollama/dolphin3:8b`                      | Traduce le richieste di modifica dell’utente in delte concrete del piano iniziale.      |
+
+## Flusso di esecuzione (alto livello)
+
+1. **Planning**: il Planner genera un piano in 6-9 bullet a partire dalla richiesta utente.
+2. **Coding**: il Coder produce lo script PowerShell seguendo il piano e le invarianti.
+3. **Static analysis**: PSScriptAnalyzer valida lo script e produce il report.
+4. **Auto-fix loop**: se ci sono errori, il Reviewer genera fix notes e il Coder rigenera lo script (fino a `max_auto_fix_iters`).
+5. **Gate utente (HITL)**: l’utente puo accettare lo script, visualizzarlo o richiedere modifiche.
+6. **Change Planner**: le richieste dell’utente vengono tradotte in fix notes e applicate dal Coder.
+7. **Output finale**: lo script viene salvato e il processo termina.
+
+![Architettura del sistema](../../img/architettura_sistema.png)
 
 ## Tecniche e Design
 
