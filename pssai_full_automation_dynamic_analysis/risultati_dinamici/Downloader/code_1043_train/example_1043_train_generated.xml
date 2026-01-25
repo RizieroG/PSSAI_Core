@@ -1,0 +1,129 @@
+<root>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:02:50.9682486Z" />
+      <EventRecordID>3550</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4868" ThreadID="4332" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-23 15:02:50.896</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8d9a-6973-5e05-000000001700}</Data>
+      <Data Name="ProcessId">1564</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="FileVersion">7.5.4.500</Data>
+      <Data Name="Description">PowerShell 7</Data>
+      <Data Name="Product">PowerShell</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">pwsh.dll</Data>
+      <Data Name="CommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_1043_train_generated.ps1"</Data>
+      <Data Name="CurrentDirectory">C:\Windows\system32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-8d6c-6973-4cbe-160000000000}</Data>
+      <Data Name="LogonId">0x16be4c</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=97C1583FAD2DE5B1ED2AEAD21B938FBF6E946DAF,MD5=77D8EFAF7D34FE7B6974A448CF541FF2,SHA256=A7AD362B22E0E289772CCCF78C7AF3B99E32F3084E675392E4A9FFDDF380BF05,IMPHASH=7A8C872F8E13D32F36A675B52EDA1D6E</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-8d6c-6973-4d05-000000001700}</Data>
+      <Data Name="ParentProcessId">1208</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"C:\Program Files\PowerShell\7\pwsh.exe" -NoProfile -ExecutionPolicy Bypass -Command "&amp; C:/ProgramData/psandman/exec-analysis-scripts.ps1 example_1043_train_generated.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:02:54.6344035Z" />
+      <EventRecordID>3627</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4868" ThreadID="4332" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-23 15:02:54.610</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8d9a-6973-5e05-000000001700}</Data>
+      <Data Name="ProcessId">1564</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_y2k1mqiz.ltk.ps1</Data>
+      <Data Name="CreationUtcTime">2026-01-23 15:02:54.610</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:02:54.6360099Z" />
+      <EventRecordID>3628</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4868" ThreadID="4332" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-23 15:02:54.610</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8d9a-6973-5e05-000000001700}</Data>
+      <Data Name="ProcessId">1564</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_ohhug3r5.jqn.psm1</Data>
+      <Data Name="CreationUtcTime">2026-01-23 15:02:54.610</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-23T15:02:58.2263417Z" />
+      <EventRecordID>3712</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4868" ThreadID="4332" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-23 15:02:58.217</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8d9a-6973-5e05-000000001700}</Data>
+      <Data Name="ProcessId">1564</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Microsoft\PowerShell\StartupProfileData-NonInteractive</Data>
+      <Data Name="CreationUtcTime">2025-12-14 17:54:33.280</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+</root>

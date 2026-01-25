@@ -1,0 +1,85 @@
+python metrics_calculator.py --xlsx report.xlsx
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Static_Collection Metrics'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Static_Per-Script Metrics'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Static_Severities'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Static_Warning Rules'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Semantic_Stats_Generated'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Semantic_Stats_GroundTruth'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Dynamic_Stats_Sysmon_Gen'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Dynamic_Stats_Sysmon_Truth'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Dynamic_Stats_PWSH_Gen'. Skipping.
+WARNING: No (Generated <X>, Ground Truth <X>) column pairs found in sheet 'Dynamic_Stats_PWSH_Truth'. Skipping.
+
+=== Multi-label Metrics Summary ===
+
+Sheet: Semantic_Comparison | Labelset: ATT&CK Tags
+  Samples: 1 | Labels (union): 4
+  Micro-F1:          0.6667
+  Macro-F1:          0.5000
+  Jaccard (samples): 0.5000
+  Hamming Loss:      0.5000
+  Exact Match Ratio: 0.0000
+  Diagnostics:
+    Avg true labels/sample: 4.000
+    Avg pred labels/sample: 2.000
+    Avg intersection/sample:2.000
+
+Sheet: Semantic_Comparison | Labelset: Triggered Rules
+  Samples: 1 | Labels (union): 4
+  Micro-F1:          0.4000
+  Macro-F1:          0.2500
+  Jaccard (samples): 0.2500
+  Hamming Loss:      0.7500
+  Exact Match Ratio: 0.0000
+  Diagnostics:
+    Avg true labels/sample: 3.000
+    Avg pred labels/sample: 2.000
+    Avg intersection/sample:1.000
+
+Sheet: Dynamic_Sysmon_Comparison | Labelset: ATT&CK Tags
+  Samples: 1 | Labels (union): 6
+  Micro-F1:          0.5000
+  Macro-F1:          0.3333
+  Jaccard (samples): 0.3333
+  Hamming Loss:      0.6667
+  Exact Match Ratio: 0.0000
+  Diagnostics:
+    Avg true labels/sample: 6.000
+    Avg pred labels/sample: 2.000
+    Avg intersection/sample:2.000
+
+Sheet: Dynamic_Sysmon_Comparison | Labelset: Triggered Rules
+  Samples: 1 | Labels (union): 8
+  Micro-F1:          0.2222
+  Macro-F1:          0.1250
+  Jaccard (samples): 0.1250
+  Hamming Loss:      0.8750
+  Exact Match Ratio: 0.0000
+  Diagnostics:
+    Avg true labels/sample: 8.000
+    Avg pred labels/sample: 1.000
+    Avg intersection/sample:1.000
+
+Sheet: Dynamic_PWSH_Comparison | Labelset: ATT&CK Tags
+  Samples: 1 | Labels (union): 4
+  Micro-F1:          0.6667
+  Macro-F1:          0.5000
+  Jaccard (samples): 0.5000
+  Hamming Loss:      0.5000
+  Exact Match Ratio: 0.0000
+  Diagnostics:
+    Avg true labels/sample: 4.000
+    Avg pred labels/sample: 2.000
+    Avg intersection/sample:2.000
+
+Sheet: Dynamic_PWSH_Comparison | Labelset: Triggered Rules
+  Samples: 1 | Labels (union): 5
+  Micro-F1:          0.5714
+  Macro-F1:          0.4000
+  Jaccard (samples): 0.4000
+  Hamming Loss:      0.6000
+  Exact Match Ratio: 0.0000
+  Diagnostics:
+    Avg true labels/sample: 4.000
+    Avg pred labels/sample: 3.000
+    Avg intersection/sample:2.000
