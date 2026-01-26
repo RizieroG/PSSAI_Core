@@ -1,88 +1,205 @@
-# Agentic Self-Evaluation and Human In The Loop System for PowerShell Code Generation <!-- omit in toc -->
+# Multi-Agent System for PowerShell Code Generation <!-- omit in toc -->
 
 ## Table of Contents <!-- omit in toc -->
 <!-- TOC -->
 - [Overview](#overview)
-- [Architettura del Sistema](#architettura-del-sistema)
-- [Workflow](#workflow)
-- [Code Quality Evaluation](#code-quality-evaluation)
-- [Tecniche Utilizzate](#tecniche-utilizzate)
+- [Struttura della repository](#struttura-della-repository)
+- [Architetture](#architetture)
+  - [Visione generale del sistema (HitL)](#visione-generale-del-sistema-hitl)
+  - [Solo analisi statica](#solo-analisi-statica)
+  - [Analisi statica + dinamica](#analisi-statica--dinamica)
+- [Pipeline e workflow](#pipeline-e-workflow)
+  - [Static analysis (full automation)](#static-analysis-full-automation)
+  - [Dynamic analysis (full automation)](#dynamic-analysis-full-automation)
+  - [Human-in-the-loop](#human-in-the-loop)
+- [Risultati e metriche ottenute](#risultati-e-metriche-ottenute)
+  - [Report statici (PSScriptAnalyzer)](#report-statici-psscriptanalyzer)
+  - [Metriche testuali (ottenute)](#metriche-testuali-ottenute)
+  - [Risultati dinamici (psandman)](#risultati-dinamici-psandman)
+  - [Esempi di metriche dinamiche](#esempi-di-metriche-dinamiche)
+    - [Backdoor - example\_92](#backdoor---example_92)
+    - [Privilege Escalation - example\_351](#privilege-escalation---example_351)
+- [Tecniche utilizzate](#tecniche-utilizzate)
 - [Note](#note)
 <!-- /TOC -->
 
 ## Overview
 
-Questo progetto implementa un sistema agentico multi-ruolo basato su CrewAI, progettato per generare, valutare e correggere automaticamente codice PowerShell con interazione umana opzionale nel ciclo di revisione.
-Il sistema sfrutta tecniche di Chain-of-Thought (CoT) e un approccio di self-evaluation, combinando analisi automatica del codice (tramite PSScriptAnalyzer) e revisione umana per affinare progressivamente gli script generati.
+Questo repository raccoglie un sistema agentico multi-ruolo basato su CrewAI per generare,
+valutare e correggere automaticamente codice PowerShell. Sono presenti tre varianti operative:
 
-## Architettura del Sistema
+- **Full automation con analisi statica** (PSScriptAnalyzer).
+- **Full automation con analisi statica + dinamica** (psandman).
+- **Human-in-the-Loop** con gate utente per revisioni mirate.
 
-Il sistema è composto da quattro agents principali, ognuno con un ruolo definito:
+Ogni variante ha una cartella dedicata con codice, README specifici e risultati generati.
 
-| Agent                 | Ruolo                  | Descrizione                                                                                                 |
-| --------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 🧩 **Planner**        | Pianificazione         | Traduce la richiesta dell’utente in un piano d’azione atomico (6-9 passi sequenziali).                      |
-| 💻 **Coder**          | Generazione            | Converte il piano in uno script PowerShell completo e funzionante.                                          |
-| 🔍 **Reviewer**       | Valutazione automatica | Analizza lo script tramite *PSScriptAnalyzer* per rilevare errori di sintassi, parsing o regole di stile.   |
-| ✏️ **Change Planner** | Revisione guidata      | Interpreta le modifiche richieste dall’utente e produce *FIX NOTES* che il Coder applica come mirate. |
+## Struttura della repository
 
-## Workflow
+- `pssai_full_automation_static_analysis/`
+  - `code/`: entrypoint OpenAI/Ollama + README d'uso.
+  - `risultati_statici/`: report PSScriptAnalyzer e metriche testuali (CSV/XLSX).
+  - `risultati_dinamici/`: log e report di esecuzione (per categoria).
+- `pssai_full_automation_dynamic_analysis/`
+  - `code/`: entrypoint OpenAI per pipeline dinamica + README d'uso.
+  - `risultati_statici/`: report PSScriptAnalyzer + metriche testuali (XLSX).
+  - `risultati_dinamici/`: log psandman ed evidenze runtime (XML/EVTX/XLSX).
+- `pssai_hitl/`
+  - `code/`: variante con interazione utente (HITL) + README d'uso.
+  - `risultati_statici/`: report statici e metriche (XLSX).
+- `evaluation_metrics/`
+  - toolkit per tokenizzazione e calcolo metriche (BLEU/ROUGE/METEOR/EditDistance/chrF) + README.
+- `img/`
+  - diagrammi architetturali del sistema.
+- `README.md`
+  - questo documento (panoramica completa della repository).
 
+## Architetture
+
+### Visione generale del sistema (HitL)
 ![Architettura del sistema](./img/architettura_sistema.png)
 
-1. **Input utente**
-    - L’utente inserisce una richiesta in linguaggio naturale (es. “Crea uno script che mostra più finestre di popup con messaggi casuali”).
+### Solo analisi statica
+![Architettura del sistema - solo analisi statica](./img/architettura_sistema_solo_analisi_statica.png)
 
-2. **Planning**
-    - Il Planner converte la richiesta in un piano strutturato step-by-step, focalizzato su azioni deterministiche.
+### Analisi statica + dinamica
+![Architettura del sistema - analisi statica e dinamica](./img/architettura_sistema_analisi_statica_e_dinamica.png)
 
-3. **Code Generation**
-    - Il Coder genera il codice PowerShell seguendo il piano fornito, producendo un file .ps1 eseguibile.
+## Pipeline e workflow
 
-4. **Static Analysis**
-    - Lo script viene analizzato automaticamente dal modulo PSScriptAnalyzer, che restituisce un report JSON contenente eventuali errori di parsing o warning.
+### Static analysis (full automation)
+1. **Planning**: il Planner genera un piano in 6-9 bullet.
+2. **Coding**: il Coder produce lo script PowerShell.
+3. **Static analysis**: PSScriptAnalyzer valida lo script.
+4. **Review + fix loop**: il Reviewer emette fix notes; il Coder rigenera lo script (fino a `max_auto_fix_iters`).
+5. **Alignment opzionale**: con `--ref`, l'Aligner propone fix notes per avvicinare lo script al reference.
 
-5. **AI Review & Auto-Fix Loop**
-    - Il Reviewer interpreta il report e, se necessario, genera *FIX NOTES* che il Coder applica per correggere automaticamente il codice.
-    - Il ciclo code → analyze → review → fix si ripete fino a un massimo di 3 iterazioni (arbitrario).
+### Dynamic analysis (full automation)
+1. **Planning + Coding**: come nel flusso statico.
+2. **Esecuzione sandbox**: psandman esegue lo script in VM e produce XML/EVTX.
+3. **Dynamic review**: un reviewer valuta la coerenza tra piano e log runtime.
+4. **Fix loop dinamico**: se fallisce, il Change Planner genera fix notes; il Coder rigenera lo script.
+5. **Alignment + gate statico**: se usi `--ref`, l'Aligner propone fix notes e si esegue PSScriptAnalyzer post-allineamento.
 
-6. **Human-in-the-Loop Gate**
-    - Una volta superata l’analisi automatica, l’utente può:
-        - accettare lo script finale;
-        - visualizzarlo a schermo;
-        - richiedere modifiche testuali (“Cambia il messaggio del popup”, “Aggiungi log su file”).
-    - Le modifiche vengono tradotte dal Change Planner in nuovi FIX NOTES, generando un nuovo ciclo di miglioramento controllato.
+### Human-in-the-loop
+1. **Planning + Coding + Static analysis**: identico alla pipeline statica.
+2. **Gate utente**: l'utente puo accettare, visualizzare o richiedere modifiche.
+3. **Change Planner**: le richieste umane diventano fix notes per il Coder.
+4. **Output finale**: lo script viene salvato dopo approvazione.
 
-7. **Output finale**
-    - Quando l’utente approva, il sistema salva lo script .ps1 definitivo e chiude il processo.
+## Risultati e metriche ottenute
 
-## Code Quality Evaluation
+### Report statici (PSScriptAnalyzer)
+I risultati statici sono salvati in CSV/XLSX, ad esempio:
+- `pssai_full_automation_static_analysis/risultati_statici/pssa_results.csv`
+  - colonne: errori/warning/info per reference e candidato, differenze e regole comuni/uniche.
+- `pssai_full_automation_dynamic_analysis/risultati_statici/pssa_results_readble.xlsx`
+- `pssai_hitl/risultati_statici/pssa_results_readble.xlsx`
 
-Per valutare la qualità e la similarità dei codici generati, il progetto include un modulo di valutazione automatica basata su metriche linguistiche e strutturali, implementato in `test_evaluation_json_token_complete.py` (vedi cartella *evaluation_metrics*)
+### Metriche testuali (ottenute)
+Le metriche di similarita tra script candidato e riferimento sono calcolate con il toolkit
+in `evaluation_metrics/` e salvate in:
+- `pssai_full_automation_static_analysis/risultati_statici/results_eval_complete_readable.xlsx`
+- `pssai_full_automation_dynamic_analysis/risultati_statici/results_eval_complete_percentage.xlsx`
+- `pssai_hitl/risultati_statici/results_eval_percentages.xlsx`
 
-Le metriche utilizzate sono:
+Metriche presenti nei report:
+- **BLEU-1 / BLEU-2 / BLEU-4**
+- **ROUGE-L** (Precision/Recall/F1)
+- **METEOR**
+- **Edit Distance** (raw/normalized)
+- **chrF**
 
-| Metrica                      | Descrizione                                           | Libreria                |
-| ---------------------------- | ----------------------------------------------------- | ----------------------- |
-| **BLEU-1 / BLEU-2 / BLEU-4** | Similarità n-gram tra codice generato e riferimento   | `nltk`                  |
-| **ROUGE-L**                  | Similarità di sequenze (Longest Common Subsequence)   | `rouge_score`           |
-| **METEOR**                   | Similarità parole con la stessa radice o varianti linguistiche          | `nltk`                  |
-| **Edit Distance**            | Differenza minima in termini di token                 | `nltk.metrics.distance` |
-| **chrF**                     | Similarità a livello di caratteri (basata su F-score) | `sacrebleu`             |
+### Risultati dinamici (psandman)
+Le evidenze runtime sono organizzate per categoria e codice, ad esempio:
+- `pssai_full_automation_dynamic_analysis/risultati_dinamici/<Categoria>/code_*_train/`
+- `pssai_full_automation_static_analysis/risultati_dinamici/<Categoria>/code_*/`
 
-## Tecniche Utilizzate
+Categorie presenti:
+- Backdoor
+- Credential Stealer
+- Downloader
+- Launcher Injection
+- Privilege Escalation
 
-- **Multi-Agent** Reasoning con ruoli distinti e cooperanti.
+Tipicamente ogni cartella contiene:
+- log XML/EVTX generati da psandman
+- `report.xlsx` con sintesi dell'esecuzione
+- (quando presente) `evaluation-suite-metriche.txt` con metriche aggregate
 
-- **Chain-of-Thought** (CoT) per la pianificazione strutturata e il reasoning esplicito.
+### Esempi di metriche dinamiche
 
-- **Self-Evaluation Loop** basato su PSScriptAnalyzer.
+Confronto tra:
+- **Static**: full automation con sola analisi statica
+- **Dynamic**: full automation con analisi statica + dinamica
 
-- **Human-in-the-Loop** Feedback per la rifinitura iterativa.
+#### Backdoor - example_92
 
-- **Automated Quality Metrics** per confronto quantitativo tra codice reale e generato.
+| Blocco                           | Metrica  | Static | Dynamic |
+|----------------------------------|----------|--------|---------|
+| Semantic - ATT&CK Tags           | Micro-F1 | 0.91   | 0.88    |
+| Semantic - ATT&CK Tags           | Macro-F1 | 0.83   | 0.79    |
+| Semantic - ATT&CK Tags           | Jaccard  | 0.83   | 0.79    |
+| Semantic - ATT&CK Tags           | Hamming  | 0.17   | 0.21    |
+| Semantic - Triggered Rules       | Micro-F1 | 0.75   | 0.33    |
+| Semantic - Triggered Rules       | Macro-F1 | 0.60   | 0.20    |
+| Semantic - Triggered Rules       | Jaccard  | 0.60   | 0.20    |
+| Semantic - Triggered Rules       | Hamming  | 0.40   | 0.80    |
+| Dynamic Sysmon - ATT&CK Tags     | Micro-F1 | 1.00   | 1.00    |
+| Dynamic Sysmon - ATT&CK Tags     | Macro-F1 | 1.00   | 1.00    |
+| Dynamic Sysmon - ATT&CK Tags     | Jaccard  | 1.00   | 1.00    |
+| Dynamic Sysmon - ATT&CK Tags     | Hamming  | 0.00   | 0.00    |
+| Dynamic Sysmon - Triggered Rules | Micro-F1 | 1.00   | 1.00    |
+| Dynamic Sysmon - Triggered Rules | Macro-F1 | 1.00   | 1.00    |
+| Dynamic Sysmon - Triggered Rules | Jaccard  | 1.00   | 1.00    |
+| Dynamic Sysmon - Triggered Rules | Hamming  | 0.00   | 0.00    |
+| Dynamic PWSH - ATT&CK Tags       | Micro-F1 | 1.00   | 0.27    |
+| Dynamic PWSH - ATT&CK Tags       | Macro-F1 | 1.00   | 0.15    |
+| Dynamic PWSH - ATT&CK Tags       | Jaccard  | 1.00   | 0.15    |
+| Dynamic PWSH - ATT&CK Tags       | Hamming  | 0.00   | 0.85    |
+| Dynamic PWSH - Triggered Rules   | Micro-F1 | 1.00   | 0.50    |
+| Dynamic PWSH - Triggered Rules   | Macro-F1 | 1.00   | 0.50    |
+| Dynamic PWSH - Triggered Rules   | Jaccard  | 1.00   | 0.33    |
+| Dynamic PWSH - Triggered Rules   | Hamming  | 0.00   | 0.67    |
+
+#### Privilege Escalation - example_351
+
+| Blocco                           | Metrica  | Static | Dynamic |
+|----------------------------------|----------|--------|---------|
+| Semantic - ATT&CK Tags           | Micro-F1 | 0.00   | 0.92    |
+| Semantic - ATT&CK Tags           | Macro-F1 | 0.00   | 0.86    |
+| Semantic - ATT&CK Tags           | Jaccard  | 0.00   | 0.86    |
+| Semantic - ATT&CK Tags           | Hamming  | 1.00   | 0.14    |
+| Semantic - Triggered Rules       | Micro-F1 | 0.00   | 0.67    |
+| Semantic - Triggered Rules       | Macro-F1 | 0.00   | 0.50    |
+| Semantic - Triggered Rules       | Jaccard  | 0.00   | 0.50    |
+| Semantic - Triggered Rules       | Hamming  | 1.00   | 0.50    |
+| Dynamic Sysmon - ATT&CK Tags     | Micro-F1 | 0.50   | 1.00    |
+| Dynamic Sysmon - ATT&CK Tags     | Macro-F1 | 0.33   | 1.00    |
+| Dynamic Sysmon - ATT&CK Tags     | Jaccard  | 0.33   | 1.00    |
+| Dynamic Sysmon - ATT&CK Tags     | Hamming  | 0.67   | 0.00    |
+| Dynamic Sysmon - Triggered Rules | Micro-F1 | 0.40   | 1.00    |
+| Dynamic Sysmon - Triggered Rules | Macro-F1 | 0.25   | 1.00    |
+| Dynamic Sysmon - Triggered Rules | Jaccard  | 0.25   | 1.00    |
+| Dynamic Sysmon - Triggered Rules | Hamming  | 0.75   | 0.00    |
+| Dynamic PWSH - ATT&CK Tags       | Micro-F1 | 0.33   | 0.92    |
+| Dynamic PWSH - ATT&CK Tags       | Macro-F1 | 0.20   | 0.86    |
+| Dynamic PWSH - ATT&CK Tags       | Jaccard  | 0.20   | 0.86    |
+| Dynamic PWSH - ATT&CK Tags       | Hamming  | 0.80   | 0.14    |
+| Dynamic PWSH - Triggered Rules   | Micro-F1 | 0.40   | 0.60    |
+| Dynamic PWSH - Triggered Rules   | Macro-F1 | 0.25   | 0.43    |
+| Dynamic PWSH - Triggered Rules   | Jaccard  | 0.25   | 0.43    |
+| Dynamic PWSH - Triggered Rules   | Hamming  | 0.75   | 0.57    |
+
+## Tecniche utilizzate
+
+- **Multi-Agent** con ruoli distinti (Planner, Coder, Reviewer, Change Planner, Aligner).
+- **Chain-of-Thought** per la pianificazione strutturata.
+- **Self-Evaluation Loop** con PSScriptAnalyzer e PSandman (Dynamic Analysis)
+- **Human-in-the-Loop** per raffinamento manuale.
+- **Metriche di qualita** per confronto quantitativo tra codice reale e generato.
 
 ## Note
 
-Questo progetto è rilasciato per scopi di ricerca e sperimentazione accademica.
+Questo progetto e rilasciato per scopi di ricerca e sperimentazione accademica.
 Non utilizzare per la generazione automatica di codice malevolo o potenzialmente pericoloso.

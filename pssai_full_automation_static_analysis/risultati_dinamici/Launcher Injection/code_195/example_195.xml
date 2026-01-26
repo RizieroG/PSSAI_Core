@@ -1,0 +1,480 @@
+<root>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:30:45.5295483Z" />
+      <EventRecordID>3552</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:30:45.487</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="FileVersion">7.5.4.500</Data>
+      <Data Name="Description">PowerShell 7</Data>
+      <Data Name="Product">PowerShell</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">pwsh.dll</Data>
+      <Data Name="CommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_195.ps1"</Data>
+      <Data Name="CurrentDirectory">C:\Windows\system32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-8d8c-6953-16cc-140000000000}</Data>
+      <Data Name="LogonId">0x14cc16</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=97C1583FAD2DE5B1ED2AEAD21B938FBF6E946DAF,MD5=77D8EFAF7D34FE7B6974A448CF541FF2,SHA256=A7AD362B22E0E289772CCCF78C7AF3B99E32F3084E675392E4A9FFDDF380BF05,IMPHASH=7A8C872F8E13D32F36A675B52EDA1D6E</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-8d8d-6953-0405-000000001700}</Data>
+      <Data Name="ParentProcessId">3920</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"C:\Program Files\PowerShell\7\pwsh.exe" -NoProfile -ExecutionPolicy Bypass -Command "&amp; C:/ProgramData/psandman/exec-analysis-scripts.ps1 example_195.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:30:49.1797492Z" />
+      <EventRecordID>3627</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:30:49.148</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_0t0z4yhn.agi.ps1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:30:49.148</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:30:49.1825137Z" />
+      <EventRecordID>3628</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:30:49.180</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_2fs43zff.pa3.psm1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:30:49.180</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:30:52.0054436Z" />
+      <EventRecordID>3689</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:30:51.980</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8dbb-6953-1705-000000001700}</Data>
+      <Data Name="ProcessId">4012</Data>
+      <Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="FileVersion">10.0.19041.2913 (WinBuild.160101.0800)</Data>
+      <Data Name="Description">Windows PowerShell</Data>
+      <Data Name="Product">Microsoft« Windows« Operating System</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">PowerShell.EXE</Data>
+      <Data Name="CommandLine">"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Version 5.1 -s -NoLogo -NoProfile</Data>
+      <Data Name="CurrentDirectory">C:\Windows\system32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-8d8c-6953-16cc-140000000000}</Data>
+      <Data Name="LogonId">0x14cc16</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=EB39E26A364ECD0691A59FCEF61A90334112617E,MD5=BCF01E61144D6D6325650134823198B8,SHA256=B4E7BC24BF3F5C3DA2EB6E9EC5EC10F90099DEFA91B820F2F3FC70DD9E4785C4,IMPHASH=88CB9A420410BDA787E305B65518A934</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ParentProcessId">2308</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_195.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:30:56.7942576Z" />
+      <EventRecordID>3765</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:30:56.790</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8dbb-6953-1705-000000001700}</Data>
+      <Data Name="ProcessId">4012</Data>
+      <Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_smjxoecf.03k.ps1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:30:56.790</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:30:56.7968472Z" />
+      <EventRecordID>3766</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:30:56.790</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8dbb-6953-1705-000000001700}</Data>
+      <Data Name="ProcessId">4012</Data>
+      <Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_bxlh031g.ngk.psm1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:30:56.790</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:01.7956255Z" />
+      <EventRecordID>3794</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:01.790</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Microsoft\PowerShell\StartupProfileData-NonInteractive</Data>
+      <Data Name="CreationUtcTime">2025-12-14 17:54:33.280</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:04.6951001Z" />
+      <EventRecordID>3797</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:04.685</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Microsoft\PowerShell\ModuleAnalysisCache-0C86AEE9</Data>
+      <Data Name="CreationUtcTime">2025-12-15 07:06:03.741</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:05.0729698Z" />
+      <EventRecordID>3798</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:05.071</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:05.071</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:05.0735423Z" />
+      <EventRecordID>3799</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:05.071</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\tmp_nwc51edk.duu</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:05.071</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:07.7067748Z" />
+      <EventRecordID>3800</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:07.698</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\tmp_nwc51edk.duu\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584.psm1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:07.698</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:07.7201433Z" />
+      <EventRecordID>3801</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:07.716</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\tmp_nwc51edk.duu\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584.format.ps1xml</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:07.716</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:07.7252268Z" />
+      <EventRecordID>3802</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:07.716</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\tmp_nwc51edk.duu\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584.psd1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:07.716</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:07.7765994Z" />
+      <EventRecordID>3803</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:07.774</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584.format.ps1xml</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:07.774</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:07.8234444Z" />
+      <EventRecordID>3805</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:07.822</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584.psd1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:07.805</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2025-12-30T08:31:07.8276853Z" />
+      <EventRecordID>3806</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="1372" ThreadID="2064" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2025-12-30 08:31:07.822</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-8db5-6953-1605-000000001700}</Data>
+      <Data Name="ProcessId">2308</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584\remoteIpMoProxy_PowerSploit_3.0.0.0_localhost_576e686a-bf65-40a9-ae0f-5dc0531d0584.psm1</Data>
+      <Data Name="CreationUtcTime">2025-12-30 08:31:07.822</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+</root>

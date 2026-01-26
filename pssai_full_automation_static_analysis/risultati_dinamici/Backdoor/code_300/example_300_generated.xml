@@ -1,0 +1,301 @@
+<root>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:46.3136942Z" />
+      <EventRecordID>3601</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:46.287</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ProcessId">4124</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="FileVersion">7.5.4.500</Data>
+      <Data Name="Description">PowerShell 7</Data>
+      <Data Name="Product">PowerShell</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">pwsh.dll</Data>
+      <Data Name="CommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_300_generated_train_openai.ps1"</Data>
+      <Data Name="CurrentDirectory">C:\Windows\system32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-a3b3-695a-c705-160000000000}</Data>
+      <Data Name="LogonId">0x1605c7</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=97C1583FAD2DE5B1ED2AEAD21B938FBF6E946DAF,MD5=77D8EFAF7D34FE7B6974A448CF541FF2,SHA256=A7AD362B22E0E289772CCCF78C7AF3B99E32F3084E675392E4A9FFDDF380BF05,IMPHASH=7A8C872F8E13D32F36A675B52EDA1D6E</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-a3b4-695a-1805-000000001700}</Data>
+      <Data Name="ParentProcessId">4804</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"C:\Program Files\PowerShell\7\pwsh.exe" -NoProfile -ExecutionPolicy Bypass -Command "&amp; C:/ProgramData/psandman/exec-analysis-scripts.ps1 example_300_generated_train_openai.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:50.5648072Z" />
+      <EventRecordID>3710</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:50.558</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ProcessId">4124</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_rtacpvvt.fyr.ps1</Data>
+      <Data Name="CreationUtcTime">2026-01-04 17:31:50.558</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:50.5663891Z" />
+      <EventRecordID>3711</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:50.558</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ProcessId">4124</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Temp\__PSScriptPolicyTest_nhc4rf1p.cj2.psm1</Data>
+      <Data Name="CreationUtcTime">2026-01-04 17:31:50.558</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:52.7385785Z" />
+      <EventRecordID>3775</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:52.709</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a408-695a-2d05-000000001700}</Data>
+      <Data Name="ProcessId">2732</Data>
+      <Data Name="Image">C:\Windows\System32\schtasks.exe</Data>
+      <Data Name="FileVersion">10.0.19041.1503 (WinBuild.160101.0800)</Data>
+      <Data Name="Description">Task Scheduler Configuration Tool</Data>
+      <Data Name="Product">Microsoft« Windows« Operating System</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">schtasks.exe</Data>
+      <Data Name="CommandLine">"C:\Windows\system32\schtasks.exe" /Create /XML C:\Windows\Temp\task.xml /TN Microsoft\Windows\DynAmite\Backdoor</Data>
+      <Data Name="CurrentDirectory">C:\Windows\System32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-a3b3-695a-c705-160000000000}</Data>
+      <Data Name="LogonId">0x1605c7</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=CCAA6EE9EF6D0F9C8157ADC996FFD477F73B5D02,MD5=76CD6626DD8834BD4A42E6A565104DC2,SHA256=013C013E0EFD13C9380FAD58418B7ACA8356E591A5CCEFFDB910F7D8B0AD28EF,IMPHASH=ECCE05491F2E8F279F4790BCB1318C05</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ParentProcessId">4124</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_300_generated_train_openai.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:52.8491013Z" />
+      <EventRecordID>3801</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:52.847</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a408-695a-2e05-000000001700}</Data>
+      <Data Name="ProcessId">3688</Data>
+      <Data Name="Image">C:\Windows\System32\schtasks.exe</Data>
+      <Data Name="FileVersion">10.0.19041.1503 (WinBuild.160101.0800)</Data>
+      <Data Name="Description">Task Scheduler Configuration Tool</Data>
+      <Data Name="Product">Microsoft« Windows« Operating System</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">schtasks.exe</Data>
+      <Data Name="CommandLine">"C:\Windows\system32\schtasks.exe" /Create /XML C:\Windows\Temp\task2.xml /TN Microsoft\Windows\DynAmite\Keylogger</Data>
+      <Data Name="CurrentDirectory">C:\Windows\System32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-a3b3-695a-c705-160000000000}</Data>
+      <Data Name="LogonId">0x1605c7</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=CCAA6EE9EF6D0F9C8157ADC996FFD477F73B5D02,MD5=76CD6626DD8834BD4A42E6A565104DC2,SHA256=013C013E0EFD13C9380FAD58418B7ACA8356E591A5CCEFFDB910F7D8B0AD28EF,IMPHASH=ECCE05491F2E8F279F4790BCB1318C05</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ParentProcessId">4124</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_300_generated_train_openai.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:52.9174766Z" />
+      <EventRecordID>3828</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:52.915</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a408-695a-2f05-000000001700}</Data>
+      <Data Name="ProcessId">1176</Data>
+      <Data Name="Image">C:\Windows\System32\schtasks.exe</Data>
+      <Data Name="FileVersion">10.0.19041.1503 (WinBuild.160101.0800)</Data>
+      <Data Name="Description">Task Scheduler Configuration Tool</Data>
+      <Data Name="Product">Microsoft« Windows« Operating System</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">schtasks.exe</Data>
+      <Data Name="CommandLine">"C:\Windows\system32\schtasks.exe" /Run /TN Microsoft\Windows\DynAmite\Backdoor</Data>
+      <Data Name="CurrentDirectory">C:\Windows\System32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-a3b3-695a-c705-160000000000}</Data>
+      <Data Name="LogonId">0x1605c7</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=CCAA6EE9EF6D0F9C8157ADC996FFD477F73B5D02,MD5=76CD6626DD8834BD4A42E6A565104DC2,SHA256=013C013E0EFD13C9380FAD58418B7ACA8356E591A5CCEFFDB910F7D8B0AD28EF,IMPHASH=ECCE05491F2E8F279F4790BCB1318C05</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ParentProcessId">4124</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_300_generated_train_openai.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>1</EventID>
+      <Version>5</Version>
+      <Level>4</Level>
+      <Task>1</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:52.9923522Z" />
+      <EventRecordID>3854</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:52.990</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a408-695a-3005-000000001700}</Data>
+      <Data Name="ProcessId">4668</Data>
+      <Data Name="Image">C:\Windows\System32\schtasks.exe</Data>
+      <Data Name="FileVersion">10.0.19041.1503 (WinBuild.160101.0800)</Data>
+      <Data Name="Description">Task Scheduler Configuration Tool</Data>
+      <Data Name="Product">Microsoft« Windows« Operating System</Data>
+      <Data Name="Company">Microsoft Corporation</Data>
+      <Data Name="OriginalFileName">schtasks.exe</Data>
+      <Data Name="CommandLine">"C:\Windows\system32\schtasks.exe" /Run /TN Microsoft\Windows\DynAmite\Keylogger</Data>
+      <Data Name="CurrentDirectory">C:\Windows\System32\</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+      <Data Name="LogonGuid">{bdb1c22b-a3b3-695a-c705-160000000000}</Data>
+      <Data Name="LogonId">0x1605c7</Data>
+      <Data Name="TerminalSessionId">0</Data>
+      <Data Name="IntegrityLevel">High</Data>
+      <Data Name="Hashes">SHA1=CCAA6EE9EF6D0F9C8157ADC996FFD477F73B5D02,MD5=76CD6626DD8834BD4A42E6A565104DC2,SHA256=013C013E0EFD13C9380FAD58418B7ACA8356E591A5CCEFFDB910F7D8B0AD28EF,IMPHASH=ECCE05491F2E8F279F4790BCB1318C05</Data>
+      <Data Name="ParentProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ParentProcessId">4124</Data>
+      <Data Name="ParentImage">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="ParentCommandLine">"pwsh" -NonInteractive -File "C:\ProgramData\psandman\inputs\example_300_generated_train_openai.ps1"</Data>
+      <Data Name="ParentUser">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <EventID>11</EventID>
+      <Version>2</Version>
+      <Level>4</Level>
+      <Task>11</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8000000000000000</Keywords>
+      <TimeCreated SystemTime="2026-01-04T17:31:53.4892268Z" />
+      <EventRecordID>3884</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4740" ThreadID="72" />
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>DESKTOP-U2U3HDH</Computer>
+      <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+      <Data Name="RuleName">-</Data>
+      <Data Name="UtcTime">2026-01-04 17:31:53.479</Data>
+      <Data Name="ProcessGuid">{bdb1c22b-a402-695a-2c05-000000001700}</Data>
+      <Data Name="ProcessId">4124</Data>
+      <Data Name="Image">C:\Program Files\PowerShell\7\pwsh.exe</Data>
+      <Data Name="TargetFilename">C:\Users\rizz\AppData\Local\Microsoft\PowerShell\StartupProfileData-NonInteractive</Data>
+      <Data Name="CreationUtcTime">2025-12-14 17:54:33.280</Data>
+      <Data Name="User">DESKTOP-U2U3HDH\rizz</Data>
+    </EventData>
+  </Event>
+</root>
