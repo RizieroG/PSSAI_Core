@@ -1,3 +1,8 @@
+> [!WARNING]
+> **DEPRECATO dal 22 marzo 2026**
+> Questo componente non e piu mantenuto.
+> Usare solo per storico/riproducibilita. Non usare per nuovi sviluppi.
+
 # PSSAI Dynamic Analysis
 
 ## Scopo
