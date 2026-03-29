@@ -11,22 +11,26 @@ from crewai import Agent, Task, Crew, LLM
 
 # ========================= PSANDMAN FIXED PATHS ========================= #
 # Percorsi fissi richiesti (nessuna env var necessaria per input/output).
-PSANDMAN_BASE_DIR      = r"C:\PATH\TO\psandman"
-PSANDMAN_SCRIPT_PATH   = os.path.join(PSANDMAN_BASE_DIR, "psandman.py")
-PSANDMAN_INPUT_DIR     = os.path.join(PSANDMAN_BASE_DIR, "inputs")
-PSANDMAN_OUTPUT_ROOT   = os.path.join(PSANDMAN_BASE_DIR, "output")
-PSANDMAN_XMLPWSH_DIR   = os.path.join(PSANDMAN_OUTPUT_ROOT, "xml-pwsh")
+PSANDMAN_BASE_DIR = r"C:\PATH\TO\psandman"
+PSANDMAN_SCRIPT_PATH = os.path.join(PSANDMAN_BASE_DIR, "psandman.py")
+PSANDMAN_INPUT_DIR = os.path.join(PSANDMAN_BASE_DIR, "inputs")
+PSANDMAN_OUTPUT_ROOT = os.path.join(PSANDMAN_BASE_DIR, "output")
+PSANDMAN_XMLPWSH_DIR = os.path.join(PSANDMAN_OUTPUT_ROOT, "xml-pwsh")
 
 
 def _require_env(name: str) -> str:
     """Fail fast when a required environment variable is missing."""
     v = os.environ.get(name, "").strip()
     if not v:
-        raise EnvironmentError(f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY).")
+        raise EnvironmentError(
+            f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY)."
+        )
     return v
+
 
 # CrewAI/LiteLLM legge OPENAI_API_KEY dall'ambiente.
 _require_env("OPENAI_API_KEY")
+
 
 def make_openai_llm(model_name: str = "gpt-3.5-turbo", temperature: float = 0.5) -> LLM:
     """Centralized LLM factory used by all agents."""
@@ -37,16 +41,17 @@ def make_openai_llm(model_name: str = "gpt-3.5-turbo", temperature: float = 0.5)
         timeout=1200,
     )
 
+
 # Models (feel free to tweak)
 OPENAI_MODEL_PLANNER = os.environ.get("OPENAI_MODEL_PLANNER", "gpt-3.5-turbo")
-OPENAI_MODEL_CODER   = os.environ.get("OPENAI_MODEL_CODER",   "gpt-3.5-turbo")
-OPENAI_MODEL_REVIEW  = os.environ.get("OPENAI_MODEL_REVIEW",  "gpt-3.5-turbo")
-OPENAI_MODEL_ALIGN   = os.environ.get("OPENAI_MODEL_ALIGN",   "gpt-3.5-turbo")
-llm_planner        = make_openai_llm(OPENAI_MODEL_PLANNER, temperature=0.5)
-llm_coder          = make_openai_llm(OPENAI_MODEL_CODER,   temperature=0.2)
-llm_reviewer       = make_openai_llm(OPENAI_MODEL_REVIEW,  temperature=0.1)
+OPENAI_MODEL_CODER = os.environ.get("OPENAI_MODEL_CODER", "gpt-3.5-turbo")
+OPENAI_MODEL_REVIEW = os.environ.get("OPENAI_MODEL_REVIEW", "gpt-3.5-turbo")
+OPENAI_MODEL_ALIGN = os.environ.get("OPENAI_MODEL_ALIGN", "gpt-3.5-turbo")
+llm_planner = make_openai_llm(OPENAI_MODEL_PLANNER, temperature=0.5)
+llm_coder = make_openai_llm(OPENAI_MODEL_CODER, temperature=0.2)
+llm_reviewer = make_openai_llm(OPENAI_MODEL_REVIEW, temperature=0.1)
 llm_change_planner = make_openai_llm(OPENAI_MODEL_PLANNER, temperature=0.5)
-llm_aligner        = make_openai_llm(OPENAI_MODEL_ALIGN,   temperature=0.3)
+llm_aligner = make_openai_llm(OPENAI_MODEL_ALIGN, temperature=0.3)
 
 # ============================== AGENTS ==================================== #
 
@@ -58,7 +63,7 @@ planner = Agent(
     ),
     backstory=(
         """
-        You are the Planner in a Planner→Coder pipeline. Transform the user request 
+        You are the Planner in a Planner→Coder pipeline. Transform the user request
         into the smallest set of sequential, atomic, and testable instructions.
 
         Global ethos:
@@ -69,7 +74,7 @@ planner = Agent(
         Output format:
         • Obey the task spec exactly: return only 6–9 bullet lines starting with '- ' (no code, no JSON, no headings).
         • Never output lines starting with 'Thought:' or any reasoning.
-        
+
         EXAMPLE 1:
         USER REQUEST: "Write a PowerShell script that open multiple popups using Windows Forms. It generates a random number of popups and displays a message in each popup."
         THOUGHT:
@@ -116,7 +121,7 @@ planner = Agent(
         """
     ),
     llm=llm_planner,
-    verbose=False
+    verbose=False,
 )
 
 coder = Agent(
@@ -125,15 +130,16 @@ coder = Agent(
         "Deliver exactly one self-contained, directly runnable PowerShell (.ps1) script "
         "that fulfills the Planner’s steps on a vanilla Windows host."
     ),
-    backstory=("""
+    backstory=(
+        """
         You are a Senior Software Engineer specialized in PowerShell scripting.
-        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs. 
+        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs.
         LET'S THINK STEP BY STEP (INTERNAL ONLY — do not output your thoughts).
 
         Hard requirements:
-        • Use only built-in Microsoft.PowerShell.* modules. 
+        • Use only built-in Microsoft.PowerShell.* modules.
         • No external dependencies, no installs, no external parameters. Define default values if needed.
-        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block, 
+        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block,
         and a single well-defined exit point.
         • No explanations, comments about decisions, or extra lines before/after the code.
         • The script must be directly runnable as-is without modifications or external params.
@@ -224,7 +230,7 @@ plan_task = Task(
         "Exactly 6–9 bullet lines, each starting with '- ', ordered per the spec and grounded in the USER REQUEST."
     ),
     agent=planner,
-    markdown=False
+    markdown=False,
 )
 
 code_task = Task(
@@ -278,14 +284,15 @@ dyn_review_task = Task(
         "(not 'missing logic') and FAIL with must_change describing how to make that path run by default "
         "(e.g., call the main function automatically, remove unreachable gating, ensure the script executes without requiring parameters).\n"
         "- If neither <CODE> nor the TIMELINE contains the required behavior, state 'missing logic' and FAIL with must_change describing what to implement.\n\n"
-         "- If the code logic is fundamentally disconnected from the plan (e.g., creating a function definition instead of a one-liner), "
+        "- If the code logic is fundamentally disconnected from the plan (e.g., creating a function definition instead of a one-liner), "
         "diagnose this as a likely generation or prompt interpretation failure. In this case, the 'must_change' field should contain "
         "specific suggestions on how to REPHRASE THE ORIGINAL REQUEST to get the desired code from the AI model, rather than suggesting code fixes.\n"
         "HARD OUTPUT RULES:\n"
         "- Output MUST be a SINGLE minified JSON object. No prose. No markdown. No code.\n"
         "- Schema:\n"
-        "  PASS => {\"verdict\":\"pass\",\"reason\":\"<=240 chars\",\"evidence\":[\"<=6 items\"]}\n"
-        " FAIL => {\"verdict\":\"fail\",\"reason\":\"<=240 chars\",\"evidence\":[\"<=10 items\"],\"must_change\":[\"<=10 items\"]}\n"        "- Evidence MUST cite concrete items using either:\n"
+        '  PASS => {"verdict":"pass","reason":"<=240 chars","evidence":["<=6 items"]}\n'
+        ' FAIL => {"verdict":"fail","reason":"<=240 chars","evidence":["<=10 items"],"must_change":["<=10 items"]}\n'
+        "- Evidence MUST cite concrete items using either:\n"
         "- The 'must_change' array can contain either code fixes OR, if a generation failure is diagnosed, specific suggestions on how to REPHRASE THE ORIGINAL REQUEST.\n"
         "- If there is no meaningful TIMELINE evidence for any required observable behavior, verdict MUST be fail and must_change MUST request "
         "either adding runtime verification (post-check) or ensuring the relevant code path executes by default.\n"
@@ -335,22 +342,22 @@ align_task = Task(
         "- Preserve behavior required by the plan and respect all INVARIANTS.\n\n"
         "STRICT OUTPUT FORMAT — reply with MINIFIED JSON ONLY (no prose, no code blocks):\n"
         "If already sufficiently aligned:\n"
-        "{\"status\":\"ok\",\"reason\":\"<=200 chars\"}\n"
+        '{"status":"ok","reason":"<=200 chars"}\n'
         "Otherwise (when concrete improvements are needed):\n"
-        "{\"status\":\"retry\",\"reason\":\"<=300 chars\",\"fix_notes\":\"- bullet 1\\n- bullet 2\\n- ...\"}\n\n"
+        '{"status":"retry","reason":"<=300 chars","fix_notes":"- bullet 1\\n- bullet 2\\n- ..."}\n\n'
         "Rules for fix_notes (when status=retry):\n"
-        "- 3–9 bullets, each starting with \"- \".\n"
+        '- 3–9 bullets, each starting with "- ".\n'
         "- Each bullet is a tiny, actionable delta \n"
         "- LET'S THINK STEP BY STEP; Never output lines starting with 'Thought:' or any reasoning.\n"
         "- Use inline backticks for short identifiers/tokens only;\n"
         "- Reference what/where to change by function/identifier names rather than line numbers (lines may shift).\n"
         "- Never remove or weaken the INVARIANTS; never add new dependencies; keep outputs/side-effects unchanged unless required by the invariants.\n\n"
         "Decision policy:\n"
-        "- Return status=\"ok\" when differences are purely cosmetic or do not improve functional/structural equivalence.\n"
-        "- Return status=\"retry\" only when small, safe deltas will materially improve equivalence or static-analysis outcomes."
+        '- Return status="ok" when differences are purely cosmetic or do not improve functional/structural equivalence.\n'
+        '- Return status="retry" only when small, safe deltas will materially improve equivalence or static-analysis outcomes.'
     ),
     expected_output=(
-        'A single JSON object with keys: '
+        "A single JSON object with keys: "
         'status=("ok"|"retry"), reason=string, and if status="retry": fix_notes as a bullet list string.'
     ),
     agent=aligner,
@@ -367,8 +374,8 @@ static_review_task = Task(
         "PSScriptAnalyzer REPORT (JSON):\n<REPORT>\n{report}\n</REPORT>\n\n"
         "HARD OUTPUT RULES:\n"
         "- Output MUST be a SINGLE minified JSON object. No prose. No markdown.\n"
-        "- PASS => {\"verdict\":\"pass\",\"reason\":\"<=240 chars\"}\n"
-        "- FAIL => {\"verdict\":\"fail\",\"reason\":\"<=240 chars\",\"fix_notes\":[\"<=10 items\"]}\n"
+        '- PASS => {"verdict":"pass","reason":"<=240 chars"}\n'
+        '- FAIL => {"verdict":"fail","reason":"<=240 chars","fix_notes":["<=10 items"]}\n'
         "- fix_notes must be concrete deltas (parse errors first). Do not add dependencies.\n"
     ),
     expected_output="A single minified JSON object with verdict pass/fail.",
@@ -378,24 +385,32 @@ static_review_task = Task(
 
 # ============================== UTILS ===================================== #
 
+
 def compact_dyn_report(report: dict) -> str:
     """Compresses psandman events into a bounded-size timeline for the reviewer."""
     raw_events = report.get("events", [])
-    
+
     ignore_cmds = {
-        "Set-StrictMode", "Out-Default", "Get-Command", "Get-FormatData", 
-        "Out-String", "Format-Default", "Check-In", "Measure-Object", 
-        "Select-Object", "Get-Help"
+        "Set-StrictMode",
+        "Out-Default",
+        "Get-Command",
+        "Get-FormatData",
+        "Out-String",
+        "Format-Default",
+        "Check-In",
+        "Measure-Object",
+        "Select-Object",
+        "Get-Help",
     }
 
     # BUDGETING: Lasciamo spazio per prompt e codice.
     # 12000 chars sono circa 3000-4000 token.
-    MAX_OUTPUT_CHARS = 12000 
-    
+    MAX_OUTPUT_CHARS = 12000
+
     timeline = []
     error_count = 0
     current_chars = 0
-    
+
     # Variabili per deduplicazione (folding)
     last_msg = None
     last_tag = None
@@ -413,16 +428,18 @@ def compact_dyn_report(report: dict) -> str:
         # Check budget preventivo
         if current_chars >= MAX_OUTPUT_CHARS:
             flush_repeat()
-            timeline.append("\n[!!!] LOG TRUNCATED: Token budget exceeded. Check full logs manually if needed.")
+            timeline.append(
+                "\n[!!!] LOG TRUNCATED: Token budget exceeded. Check full logs manually if needed."
+            )
             break
 
         msg = e.get("Msg", "")
         tag = e.get("Tag", "INFO")
-        
+
         # Filtro comandi inutili
         if any(ign in msg for ign in ignore_cmds):
             continue
-            
+
         # Conteggio errori
         if tag == "FAIL" or "Error" in msg:
             error_count += 1
@@ -433,16 +450,16 @@ def compact_dyn_report(report: dict) -> str:
         if msg == last_msg and tag == last_tag:
             repeat_count += 1
             continue
-        
+
         # Se siamo qui, l'evento è nuovo: flushiamo i precedenti se necessario
         flush_repeat()
-        
+
         ts = e.get("Time", "").split("T")[-1][:8]
         line = f"[{ts}] [{tag}] {msg}"
-        
+
         timeline.append(line)
         current_chars += len(line)
-        
+
         # Aggiorna memoria per il prossimo giro
         last_msg = msg
         last_tag = tag
@@ -460,6 +477,7 @@ TIMELINE:
 """
     return header + "\n".join(timeline)
 
+
 def _to_text(result) -> str:
     """Normalizes CrewAI results into plain text."""
     try:
@@ -471,7 +489,11 @@ def _to_text(result) -> str:
 def extract_powershell_code(text: str) -> str:
     """Extracts script code from a fenced markdown response, if present."""
     if "```" in text:
-        m = re.search(r"```(?:powershell|ps1|ps)?\s*(.*?)```", text, flags=re.DOTALL | re.IGNORECASE)
+        m = re.search(
+            r"```(?:powershell|ps1|ps)?\s*(.*?)```",
+            text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         if m:
             return m.group(1).strip()
         return re.sub(r"```", "", text, flags=re.DOTALL).strip()
@@ -492,6 +514,7 @@ def parse_jsonish(s: str) -> dict | list:
             pass
     return {}
 
+
 def parse_verdict_from_json(s: str) -> tuple[str, dict, str]:
     """Returns normalized verdict ('pass'|'fail'|'invalid'), parsed object, and raw text."""
     raw = (s or "").strip()
@@ -503,7 +526,11 @@ def parse_verdict_from_json(s: str) -> tuple[str, dict, str]:
     else:
         obj = {}
 
-    verdict = (obj.get("verdict") or obj.get("decision") or obj.get("status") or "").strip().lower()
+    verdict = (
+        (obj.get("verdict") or obj.get("decision") or obj.get("status") or "")
+        .strip()
+        .lower()
+    )
     if verdict in ("pass", "ok"):
         return "pass", obj, raw
     if verdict in ("fail", "retry"):
@@ -511,6 +538,7 @@ def parse_verdict_from_json(s: str) -> tuple[str, dict, str]:
 
     # formato non rispettato
     return "invalid", obj, raw
+
 
 def plan_to_invariants(plan_text: str) -> str:
     """Converts plan bullets into invariant bullets consumed downstream."""
@@ -522,9 +550,15 @@ def plan_to_invariants(plan_text: str) -> str:
     return "\n".join(lines) if lines else f"- {plan_text.strip()}"
 
 
-def build_coder_input_bundle(request: str, plan_text: str, invariants_text: str,
-                             current_code: str, fix_notes: str, iter_num: int,
-                             user_change_request: str = "") -> dict:
+def build_coder_input_bundle(
+    request: str,
+    plan_text: str,
+    invariants_text: str,
+    current_code: str,
+    fix_notes: str,
+    iter_num: int,
+    user_change_request: str = "",
+) -> dict:
     """Builds the payload expected by the coder task."""
     return {
         "request": request,
@@ -540,7 +574,11 @@ def build_coder_input_bundle(request: str, plan_text: str, invariants_text: str,
 def normalize_fix_notes(raw_fix_notes, enforce_bullets: bool = False) -> str:
     """Normalizes fix notes from either list or string format."""
     if isinstance(raw_fix_notes, list):
-        cleaned = [str(item).strip().lstrip("- ").strip() for item in raw_fix_notes if str(item).strip()]
+        cleaned = [
+            str(item).strip().lstrip("- ").strip()
+            for item in raw_fix_notes
+            if str(item).strip()
+        ]
         if enforce_bullets:
             return "\n".join(f"- {item}" for item in cleaned)
         return "\n".join(cleaned)
@@ -549,7 +587,6 @@ def normalize_fix_notes(raw_fix_notes, enforce_bullets: bool = False) -> str:
     if enforce_bullets and text:
         return f"- {text.lstrip('- ').strip()}" if not text.startswith("- ") else text
     return text
-
 
 
 class PsandmanRunner:
@@ -562,6 +599,7 @@ class PsandmanRunner:
       - cleans ALL subfolders/files under PSANDMAN_OUTPUT_ROOT
       - cleans ALL subfolders/files under PSANDMAN_XMLPWSH_DIR
     """
+
     def __init__(self, guest_user: str, guest_pass: str, timeout_sec: int = 1800):
         self.psandman_path = os.path.abspath(PSANDMAN_SCRIPT_PATH)
         self.workdir = os.path.abspath(PSANDMAN_BASE_DIR)
@@ -594,7 +632,9 @@ class PsandmanRunner:
                             xmls.append(os.path.join(root, fn))
         return sorted(set(xmls))
 
-    def _extract_events_from_xml(self, xml_path: str, max_events: int = 1000) -> list[dict]:
+    def _extract_events_from_xml(
+        self, xml_path: str, max_events: int = 1000
+    ) -> list[dict]:
         import xml.etree.ElementTree as ET
         import re
 
@@ -603,9 +643,13 @@ class PsandmanRunner:
 
         # REGEX OTTIMIZZATA: Cattura solo i primi 150 caratteri del valore di un parametro
         # Questo previene l'esplosione dei token su payload base64 o contenuti file lunghi
-        re_binding = re.compile(r'ParameterBinding\(([^)]+)\):\s*name="([^"]+)";\s*value="([^"]{0,150})') 
-        re_cmd = re.compile(r'CommandInvocation\(([^)]+)\)')
-        re_error = re.compile(r'(TerminatingError|NonTerminatingError)\(([^)]+)\):\s*"(.*)"')
+        re_binding = re.compile(
+            r'ParameterBinding\(([^)]+)\):\s*name="([^"]+)";\s*value="([^"]{0,150})'
+        )
+        re_cmd = re.compile(r"CommandInvocation\(([^)]+)\)")
+        re_error = re.compile(
+            r'(TerminatingError|NonTerminatingError)\(([^)]+)\):\s*"(.*)"'
+        )
 
         events = []
         try:
@@ -619,18 +663,23 @@ class PsandmanRunner:
                 continue
 
             # --- 1. Header ---
-            eid, time_created, level = None, None, None
-            sys_node = next((ch for ch in list(ev) if _strip_ns(ch.tag) == "System"), None)
+            eid, time_created = None, None
+            sys_node = next(
+                (ch for ch in list(ev) if _strip_ns(ch.tag) == "System"), None
+            )
             if sys_node:
                 for ch in list(sys_node):
                     tag = _strip_ns(ch.tag)
-                    if tag == "EventID": eid = ch.text.strip()
-                    elif tag == "TimeCreated": time_created = ch.attrib.get("SystemTime")
-                    elif tag == "Level": level = ch.text.strip()
+                    if tag == "EventID":
+                        eid = ch.text.strip()
+                    elif tag == "TimeCreated":
+                        time_created = ch.attrib.get("SystemTime")
 
             # --- 2. Data ---
             data_map = {}
-            edata_node = next((ch for ch in list(ev) if _strip_ns(ch.tag) == "EventData"), None)
+            edata_node = next(
+                (ch for ch in list(ev) if _strip_ns(ch.tag) == "EventData"), None
+            )
             if edata_node:
                 for d in list(edata_node):
                     if _strip_ns(d.tag) == "Data":
@@ -642,25 +691,33 @@ class PsandmanRunner:
             semantic_msg = ""
             tag_type = "INFO"
 
-            if eid == "4104": # ScriptBlock
+            if eid == "4104":  # ScriptBlock
                 tag_type = "CODE"
                 script_text = data_map.get("ScriptBlockText", "")
                 if "SIG # Begin signature block" in script_text:
                     semantic_msg = "<Signature Block Skipped>"
                 else:
                     # Prendi solo la prima riga significativa, max 200 chars
-                    lines = [l.strip() for l in script_text.splitlines() if l.strip()]
+                    lines = [
+                        line.strip()
+                        for line in script_text.splitlines()
+                        if line.strip()
+                    ]
                     if lines:
                         first_line = lines[0][:200]
-                        semantic_msg = f"Exec ScriptBlock: {first_line}..." if len(lines) > 1 else first_line
+                        semantic_msg = (
+                            f"Exec ScriptBlock: {first_line}..."
+                            if len(lines) > 1
+                            else first_line
+                        )
 
-            elif eid == "4103": # Pipeline
+            elif eid == "4103":  # Pipeline
                 tag_type = "EXEC"
                 payload = data_map.get("Payload", "")
-                
+
                 cmd_match = re_cmd.search(payload)
                 err_match = re_error.search(payload)
-                
+
                 if cmd_match:
                     cmd_name = cmd_match.group(1)
                     # Estrai parametri troncati
@@ -669,37 +726,39 @@ class PsandmanRunner:
                         # m[1] = param name, m[2] = truncated value
                         val = m[2] + ("..." if len(m[2]) == 150 else "")
                         params.append(f'-{m[1]} "{val}"')
-                    
+
                     semantic_msg = f"CMD: {cmd_name} {' '.join(params)}"
-                
+
                 if err_match:
                     tag_type = "FAIL"
-                    err_text = err_match.group(3)[:300] # Max 300 chars per errore
+                    err_text = err_match.group(3)[:300]  # Max 300 chars per errore
                     sep = " | " if semantic_msg else ""
                     semantic_msg = f"{semantic_msg}{sep}ERROR: {err_text}"
-                
+
                 if not semantic_msg and payload:
                     semantic_msg = payload[:200].replace("\n", " | ")
 
-            elif eid == "4100": # Error
+            elif eid == "4100":  # Error
                 tag_type = "FAIL"
-                msg = data_map.get('Message') or data_map.get('Payload') or ""
+                msg = data_map.get("Message") or data_map.get("Payload") or ""
                 semantic_msg = f"ERROR: {msg[:300]}"
 
             # Scarta eventi vuoti o inutili
             if not semantic_msg or "Host Name =" in semantic_msg:
                 continue
 
-            events.append({
-                "EventID": eid,
-                "Time": time_created,
-                "Tag": tag_type,
-                "Msg": semantic_msg
-            })
-            
+            events.append(
+                {
+                    "EventID": eid,
+                    "Time": time_created,
+                    "Tag": tag_type,
+                    "Msg": semantic_msg,
+                }
+            )
+
             if len(events) >= max_events:
                 break
-                
+
         return events
 
     def run(self, host_script_path: str) -> dict:
@@ -734,12 +793,17 @@ class PsandmanRunner:
             env["PYTHONIOENCODING"] = "utf-8"
 
             cmd = [
-                sys.executable, "-X", "utf8",
+                sys.executable,
+                "-X",
+                "utf8",
                 self.psandman_path,
-                "--snapshot", "post-setup-20260126",
+                "--snapshot",
+                "post-setup-20260126",
                 "--debug",
-                "--guest-user", self.guest_user,
-                "--guest-pass", self.guest_pass,
+                "--guest-user",
+                self.guest_user,
+                "--guest-pass",
+                self.guest_pass,
             ]
 
             try:
@@ -748,7 +812,7 @@ class PsandmanRunner:
                     cwd=self.workdir,
                     env=env,
                     capture_output=True,
-                    timeout=self.timeout
+                    timeout=self.timeout,
                 )
             except subprocess.TimeoutExpired as e:
                 dur_ms = int((time.time() - start) * 1000)
@@ -756,7 +820,9 @@ class PsandmanRunner:
                     "success": False,
                     "runner": "psandman",
                     "exit_code": -1,
-                    "stdout": (e.stdout.decode("utf-8", errors="replace") if e.stdout else ""),
+                    "stdout": (
+                        e.stdout.decode("utf-8", errors="replace") if e.stdout else ""
+                    ),
                     "stderr": "TimeoutExpired",
                     "duration_ms": dur_ms,
                     "input_dir": self.input_dir,
@@ -815,10 +881,12 @@ class PsandmanRunner:
             except Exception:
                 pass
 
+
 class PSScriptAnalyzerRunner:
     """
     Runs PSScriptAnalyzer on the saved script and returns a JSON-ish dict with diagnostics.
     """
+
     def __init__(self, host_script_path: str, timeout_sec: int = 120):
         self.host_script_path = os.path.abspath(host_script_path)
         self.timeout = timeout_sec
@@ -878,7 +946,9 @@ $payload = [pscustomobject]@{{
 
 $payload | ConvertTo-Json -Depth 6
 """
-        with tempfile.NamedTemporaryFile('w', suffix='.ps1', delete=False, encoding='utf-8') as tf:
+        with tempfile.NamedTemporaryFile(
+            "w", suffix=".ps1", delete=False, encoding="utf-8"
+        ) as tf:
             tf.write(ps_code)
             temp_ps1 = tf.name
 
@@ -887,31 +957,50 @@ $payload | ConvertTo-Json -Depth 6
                 [shell, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", temp_ps1],
                 capture_output=True,
                 timeout=self.timeout,
-                text=True
+                text=True,
             )
             out = (proc.stdout or "").strip()
             try:
-                return json.loads(out) if out else {
-                    "success": False, "exit_code": -3, "stdout": out, "stderr": "Empty output from analyzer", "runner": "PSScriptAnalyzer", "diagnostics": []
-                }
+                return (
+                    json.loads(out)
+                    if out
+                    else {
+                        "success": False,
+                        "exit_code": -3,
+                        "stdout": out,
+                        "stderr": "Empty output from analyzer",
+                        "runner": "PSScriptAnalyzer",
+                        "diagnostics": [],
+                    }
+                )
             except Exception:
                 return {
                     "success": False,
                     "exit_code": -4,
                     "stdout": out,
-                    "stderr": (proc.stderr or "").strip() or "Invalid JSON from analyzer",
+                    "stderr": (proc.stderr or "").strip()
+                    or "Invalid JSON from analyzer",
                     "runner": "PSScriptAnalyzer",
-                    "diagnostics": []
+                    "diagnostics": [],
                 }
         except subprocess.TimeoutExpired:
             return {
-                "success": False, "exit_code": -1, "stdout": "", "stderr": "TimeoutExpired", "runner": "PSScriptAnalyzer", "diagnostics": []
+                "success": False,
+                "exit_code": -1,
+                "stdout": "",
+                "stderr": "TimeoutExpired",
+                "runner": "PSScriptAnalyzer",
+                "diagnostics": [],
             }
         finally:
-            try: os.remove(temp_ps1)
-            except Exception: pass
+            try:
+                os.remove(temp_ps1)
+            except Exception:
+                pass
+
 
 # ============================== MAIN ====================================== #
+
 
 def main():
     default_request = (
@@ -926,7 +1015,7 @@ def main():
             i = args.index(flag)
             if i + 1 < len(args):
                 v = args[i + 1]
-                del args[i:i+2]
+                del args[i : i + 2]
                 return v
         return None
 
@@ -964,7 +1053,7 @@ def main():
     max_align_rounds = 1
     max_global_iters = 3
 
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     script_code = ""
     script_path = ""
     fix_notes = "Initial implementation from the plan."
@@ -978,7 +1067,9 @@ def main():
         print(f"Salvato: {path}")
         return path
 
-    align_crew = Crew(agents=[aligner], tasks=[align_task]) if ref_code.strip() else None
+    align_crew = (
+        Crew(agents=[aligner], tasks=[align_task]) if ref_code.strip() else None
+    )
 
     global_completed = False
     global_iteration = 0
@@ -987,9 +1078,13 @@ def main():
     while True:
         if ref_code.strip():
             if global_iteration >= max_global_iters:
-                print("Global iteration budget exhausted; continuing with latest candidate.")
+                print(
+                    "Global iteration budget exhausted; continuing with latest candidate."
+                )
                 break
-            print(f"\n=== GLOBAL ITERATION {global_iteration + 1} / {max_global_iters} ===")
+            print(
+                f"\n=== GLOBAL ITERATION {global_iteration + 1} / {max_global_iters} ==="
+            )
         else:
             # Se non c'è ref_code (niente allineamento), il ciclo globale corre una sola volta
             print("\n=== GLOBAL ITERATION 1 / 1 (no alignment phase) ===")
@@ -1021,7 +1116,9 @@ def main():
                 break
 
             if report.get("exit_code") == -2:
-                raise RuntimeError(report.get("stderr") or "PSScriptAnalyzer non disponibile.")
+                raise RuntimeError(
+                    report.get("stderr") or "PSScriptAnalyzer non disponibile."
+                )
 
             review_inputs = {
                 "request": request,
@@ -1047,14 +1144,18 @@ def main():
             print("--- STATIC FIX NOTES ---")
             print(fix_notes)
         else:
-            print("Static analysis did not pass within max iterations; continuing anyway.")
+            print(
+                "Static analysis did not pass within max iterations; continuing anyway."
+            )
 
         # === DYNAMIC LOOP: psandman → dynamic reviewer (max 1) ===
         restart_static_from_dynamic = False
         dynamic_passed = False
 
         if force_alignment_next_cycle:
-            print("Skipping dynamic stage; proceeding to alignment due to repeated dynamic failures.")
+            print(
+                "Skipping dynamic stage; proceeding to alignment due to repeated dynamic failures."
+            )
             force_alignment_next_cycle = False
             dynamic_passed = True
         else:
@@ -1116,7 +1217,9 @@ def main():
                     for f in xml_files
                 )
                 if not has_xml_pwsh:
-                    raise RuntimeError("psandman did not produce xml-pwsh output. Aborting the flow.")
+                    raise RuntimeError(
+                        "psandman did not produce xml-pwsh output. Aborting the flow."
+                    )
 
                 fix_inputs = {
                     "request": request,
@@ -1161,14 +1264,16 @@ def main():
                     dyn_failures_since_alignment = 0
                 break
             else:
-                print("Dynamic analysis did not pass within max iterations; continuing anyway.")
+                print(
+                    "Dynamic analysis did not pass within max iterations; continuing anyway."
+                )
 
         if restart_static_from_dynamic or not dynamic_passed:
             if not restart_static_from_dynamic and not fix_notes.startswith("- "):
-                fix_notes = (
-                    "Dynamic stage did not reach a pass verdict. Re-run generation starting from static analysis."
-                )
-            print("Dynamic stage requires code changes; restarting from static analysis.")
+                fix_notes = "Dynamic stage did not reach a pass verdict. Re-run generation starting from static analysis."
+            print(
+                "Dynamic stage requires code changes; restarting from static analysis."
+            )
             continue
 
         # === ALIGNMENT STAGE (global restart if fixes are needed) ===
@@ -1185,7 +1290,11 @@ def main():
                 align_res = align_crew.kickoff(inputs=align_inputs)
                 align_raw = parse_jsonish(_to_text(align_res).strip())
                 if isinstance(align_raw, list):
-                    align_json = align_raw[0] if align_raw and isinstance(align_raw[0], dict) else {}
+                    align_json = (
+                        align_raw[0]
+                        if align_raw and isinstance(align_raw[0], dict)
+                        else {}
+                    )
                 elif isinstance(align_raw, dict):
                     align_json = align_raw
                 else:
@@ -1193,17 +1302,25 @@ def main():
                 status = (align_json.get("status") or "").lower()
 
                 if status == "ok":
-                    print("Alignment: il candidato è sufficientemente simile al reference.")
+                    print(
+                        "Alignment: il candidato è sufficientemente simile al reference."
+                    )
                     alignment_ok = True
                     break
 
-                fix_notes = normalize_fix_notes(align_json.get("fix_notes"), enforce_bullets=True)
+                fix_notes = normalize_fix_notes(
+                    align_json.get("fix_notes"), enforce_bullets=True
+                )
 
                 if not fix_notes:
-                    print("Alignment LLM: nessuna FIX NOTES fornita; interrompo l'allineamento.")
+                    print(
+                        "Alignment LLM: nessuna FIX NOTES fornita; interrompo l'allineamento."
+                    )
                     break
 
-                with open(f"alignnotes_{timestamp}_round{a}.txt", "w", encoding="utf-8") as f:
+                with open(
+                    f"alignnotes_{timestamp}_round{a}.txt", "w", encoding="utf-8"
+                ) as f:
                     f.write(fix_notes + "\n")
 
                 print("--- ALIGNMENT FIX NOTES ---")
@@ -1236,12 +1353,16 @@ def main():
 
             if alignment_restart:
                 if global_iteration >= max_global_iters:
-                    print("Alignment retries exhausted; continuing with latest candidate.")
+                    print(
+                        "Alignment retries exhausted; continuing with latest candidate."
+                    )
                     global_completed = True
                     break
                 continue
 
-            raise RuntimeError("Alignment stage could not complete due to missing fix notes.")
+            raise RuntimeError(
+                "Alignment stage could not complete due to missing fix notes."
+            )
         else:
             global_completed = True
             break

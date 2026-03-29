@@ -70,7 +70,7 @@ planner = Agent(
     ),
     backstory=(
         """
-        You are the Planner in a Planner→Coder pipeline. Transform the user request 
+        You are the Planner in a Planner→Coder pipeline. Transform the user request
         into the smallest set of sequential, atomic, and testable instructions.
 
         Global ethos:
@@ -81,7 +81,7 @@ planner = Agent(
         Output format:
         • Obey the task spec exactly: return only 6–9 bullet lines starting with '- ' (no code, no JSON, no headings).
         • Never output lines starting with 'Thought:' or any reasoning.
-        
+
         EXAMPLE 1:
         USER REQUEST: "Write a PowerShell script that open multiple popups using Windows Forms. It generates a random number of popups and displays a message in each popup."
         THOUGHT:
@@ -139,13 +139,13 @@ coder = Agent(
     ),
     backstory=("""
         You are a Senior Software Engineer specialized in PowerShell scripting.
-        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs. 
+        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs.
         LET'S THINK STEP BY STEP (INTERNAL ONLY — do not output your thoughts).
 
         Hard requirements:
-        • Use only built-in Microsoft.PowerShell.* modules. 
+        • Use only built-in Microsoft.PowerShell.* modules.
         • No external dependencies, no installs, no external parameters. Define default values if needed.
-        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block, 
+        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block,
         and a single well-defined exit point.
         • No explanations, comments about decisions, or extra lines before/after the code.
         • The script must be directly runnable as-is without modifications or external params.
@@ -416,21 +416,21 @@ static_review_task = Task(
 
 def compact_dyn_report(report: dict, request_text: str = "", plan_text: str = "", code_text: str = "") -> str:
     raw_events = report.get("events", [])
-    
+
     ignore_cmds = {
-        "Set-StrictMode", "Out-Default", "Get-Command", "Get-FormatData", 
-        "Out-String", "Format-Default", "Check-In", "Measure-Object", 
+        "Set-StrictMode", "Out-Default", "Get-Command", "Get-FormatData",
+        "Out-String", "Format-Default", "Check-In", "Measure-Object",
         "Select-Object", "Get-Help"
     }
 
-    # BUDGETING: Lasciamo spazio per prompt e codice. 
+    # BUDGETING: Lasciamo spazio per prompt e codice.
     # 12000 chars sono circa 3000-4000 token.
-    MAX_OUTPUT_CHARS = 12000 
-    
+    MAX_OUTPUT_CHARS = 12000
+
     timeline = []
     error_count = 0
     current_chars = 0
-    
+
     # Variabili per deduplicazione (folding)
     last_msg = None
     last_tag = None
@@ -453,11 +453,11 @@ def compact_dyn_report(report: dict, request_text: str = "", plan_text: str = ""
 
         msg = e.get("Msg", "")
         tag = e.get("Tag", "INFO")
-        
+
         # Filtro comandi inutili
         if any(ign in msg for ign in ignore_cmds):
             continue
-            
+
         # Conteggio errori
         if tag == "FAIL" or "Error" in msg:
             error_count += 1
@@ -468,16 +468,16 @@ def compact_dyn_report(report: dict, request_text: str = "", plan_text: str = ""
         if msg == last_msg and tag == last_tag:
             repeat_count += 1
             continue
-        
+
         # Se siamo qui, l'evento è nuovo: flushiamo i precedenti se necessario
         flush_repeat()
-        
+
         ts = e.get("Time", "").split("T")[-1][:8]
         line = f"[{ts}] [{tag}] {msg}"
-        
+
         timeline.append(line)
         current_chars += len(line)
-        
+
         # Aggiorna memoria per il prossimo giro
         last_msg = msg
         last_tag = tag
@@ -634,7 +634,7 @@ class PsandmanRunner:
         # - ParameterBinding: grab param name/value (value capped to 150 chars).
         # - CommandInvocation: grab invoked command name.
         # - Error: capture error text (later truncated).
-        re_binding = re.compile(r'ParameterBinding\(([^)]+)\):\s*name="([^"]+)";\s*value="([^"]{0,150})') 
+        re_binding = re.compile(r'ParameterBinding\(([^)]+)\):\s*name="([^"]+)";\s*value="([^"]{0,150})')
         re_cmd = re.compile(r'CommandInvocation\(([^)]+)\)')
         re_error = re.compile(r'(TerminatingError|NonTerminatingError)\(([^)]+)\):\s*"(.*)"')
 
@@ -706,11 +706,11 @@ class PsandmanRunner:
                 # Pipeline events contain command invocation + parameter bindings.
                 tag_type = "EXEC"
                 payload = data_map.get("Payload", "")
-                
+
                 # Try to detect command name and parameter bindings from payload.
                 cmd_match = re_cmd.search(payload)
                 err_match = re_error.search(payload)
-                
+
                 if cmd_match:
                     cmd_name = cmd_match.group(1)
                     # Estrai parametri troncati
@@ -719,16 +719,16 @@ class PsandmanRunner:
                         # m[1] = param name, m[2] = truncated value
                         val = m[2] + ("..." if len(m[2]) == 150 else "")
                         params.append(f'-{m[1]} "{val}"')
-                    
+
                     semantic_msg = f"CMD: {cmd_name} {' '.join(params)}"
-                
+
                 if err_match:
                     # Promote to FAIL when errors are present in the payload.
                     tag_type = "FAIL"
                     err_text = err_match.group(3)[:300] # Max 300 chars per errore
                     sep = " | " if semantic_msg else ""
                     semantic_msg = f"{semantic_msg}{sep}ERROR: {err_text}"
-                
+
                 if not semantic_msg and payload:
                     # Fallback: keep a trimmed payload line for visibility.
                     semantic_msg = payload[:200].replace("\n", " | ")
@@ -752,11 +752,11 @@ class PsandmanRunner:
                 "Tag": tag_type,
                 "Msg": semantic_msg
             })
-            
+
             if len(events) >= max_events:
                 # Stop early to bound memory/time per XML file.
                 break
-                
+
         return events
 
     def run(self, host_script_path: str) -> dict:
@@ -1060,7 +1060,7 @@ def main() -> int:
         script_code = extract_powershell_code(code_text)
         script_path = _save_script(script_code, it)
 
-        
+
         print("--- DYNAMIC ANALYSIS (psandman) ---")
         runner = PsandmanRunner(
             guest_user=guest_user,
@@ -1161,7 +1161,7 @@ def main() -> int:
             align_res = align_crew.kickoff(inputs=align_inputs)
             align_json = parse_jsonish(_to_text(align_res).strip())
             status = (align_json.get("status") or "").lower()
-            
+
             if status == "ok":
                 print("Alignment: il candidato è sufficientemente simile al reference.")
                 break

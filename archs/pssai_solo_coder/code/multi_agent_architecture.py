@@ -8,7 +8,9 @@ def _require_env(name: str) -> str:
     """Ensure required env var is set (used by CrewAI/OpenAI)."""
     v = os.environ.get(name, "").strip()
     if not v:
-        raise EnvironmentError(f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY).")
+        raise EnvironmentError(
+            f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY)."
+        )
     return v
 
 
@@ -69,6 +71,7 @@ code_task = Task(
 
 # =============================== UTILS ==================================== #
 
+
 def _to_text(result) -> str:
     """Extract raw text from CrewAI result as robustly as possible."""
     # common attrs in CrewAI results
@@ -120,6 +123,7 @@ def build_coder_input_bundle(request: str) -> dict:
 
 # =============================== MAIN ===================================== #
 
+
 def main():
     """Single-pass pipeline: request -> coder -> sanitize output -> save script."""
     default_request = (
@@ -153,7 +157,9 @@ def main():
     script_code = extract_powershell_code(raw_text)
 
     if not script_code.strip():
-        raise RuntimeError("LLM returned empty PowerShell code (probabile blocco policy o errore nel prompt).")
+        raise RuntimeError(
+            "LLM returned empty PowerShell code (probabile blocco policy o errore nel prompt)."
+        )
 
     # Persist with UTF-8 BOM for Windows PowerShell compatibility.
     script_path = os.path.join(os.getcwd(), f"generated_{timestamp}.ps1")

@@ -8,15 +8,20 @@ import shutil
 from datetime import datetime
 from crewai import Agent, Task, Crew, LLM
 
+
 def _require_env(name: str) -> str:
     """Fail fast when a required environment variable is missing."""
     v = os.environ.get(name, "").strip()
     if not v:
-        raise EnvironmentError(f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY).")
+        raise EnvironmentError(
+            f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY)."
+        )
     return v
+
 
 # CrewAI/LiteLLM legge OPENAI_API_KEY dall'ambiente.
 _require_env("OPENAI_API_KEY")
+
 
 def make_openai_llm(model_name: str = "gpt-3.5-turbo", temperature: float = 0.5) -> LLM:
     """Centralized LLM factory used by all agents."""
@@ -27,15 +32,16 @@ def make_openai_llm(model_name: str = "gpt-3.5-turbo", temperature: float = 0.5)
         timeout=1200,
     )
 
+
 # Models (feel free to tweak)
 OPENAI_MODEL_PLANNER = os.environ.get("OPENAI_MODEL_PLANNER", "gpt-3.5-turbo")
-OPENAI_MODEL_CODER   = os.environ.get("OPENAI_MODEL_CODER",   "gpt-3.5-turbo")
-OPENAI_MODEL_REVIEW  = os.environ.get("OPENAI_MODEL_REVIEW",  "gpt-3.5-turbo")
-OPENAI_MODEL_ALIGN   = os.environ.get("OPENAI_MODEL_ALIGN",   "gpt-3.5-turbo")
-llm_planner        = make_openai_llm(OPENAI_MODEL_PLANNER, temperature=0.5)
-llm_coder          = make_openai_llm(OPENAI_MODEL_CODER,   temperature=0.2)
-llm_reviewer       = make_openai_llm(OPENAI_MODEL_REVIEW,  temperature=0.1)
-llm_aligner        = make_openai_llm(OPENAI_MODEL_ALIGN,   temperature=0.3)
+OPENAI_MODEL_CODER = os.environ.get("OPENAI_MODEL_CODER", "gpt-3.5-turbo")
+OPENAI_MODEL_REVIEW = os.environ.get("OPENAI_MODEL_REVIEW", "gpt-3.5-turbo")
+OPENAI_MODEL_ALIGN = os.environ.get("OPENAI_MODEL_ALIGN", "gpt-3.5-turbo")
+llm_planner = make_openai_llm(OPENAI_MODEL_PLANNER, temperature=0.5)
+llm_coder = make_openai_llm(OPENAI_MODEL_CODER, temperature=0.2)
+llm_reviewer = make_openai_llm(OPENAI_MODEL_REVIEW, temperature=0.1)
+llm_aligner = make_openai_llm(OPENAI_MODEL_ALIGN, temperature=0.3)
 
 # ============================== AGENTS ==================================== #
 
@@ -47,7 +53,7 @@ planner = Agent(
     ),
     backstory=(
         """
-        You are the Planner in a Planner→Coder pipeline. Transform the user request 
+        You are the Planner in a Planner→Coder pipeline. Transform the user request
         into the smallest set of sequential, atomic, and testable instructions.
 
         Global ethos:
@@ -58,7 +64,7 @@ planner = Agent(
         Output format:
         • Obey the task spec exactly: return only 6–9 bullet lines starting with '- ' (no code, no JSON, no headings).
         • Never output lines starting with 'Thought:' or any reasoning.
-        
+
         EXAMPLE 1:
         USER REQUEST: "Write a PowerShell script that open multiple popups using Windows Forms. It generates a random number of popups and displays a message in each popup."
         THOUGHT:
@@ -105,7 +111,7 @@ planner = Agent(
         """
     ),
     llm=llm_planner,
-    verbose=False
+    verbose=False,
 )
 
 coder = Agent(
@@ -114,15 +120,16 @@ coder = Agent(
         "Deliver exactly one self-contained, directly runnable PowerShell (.ps1) script "
         "that fulfills the Planner’s steps on a vanilla Windows host."
     ),
-    backstory=("""
+    backstory=(
+        """
         You are a Senior Software Engineer specialized in PowerShell scripting.
-        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs. 
+        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs.
         LET'S THINK STEP BY STEP (INTERNAL ONLY — do not output your thoughts).
 
         Hard requirements:
-        • Use only built-in Microsoft.PowerShell.* modules. 
+        • Use only built-in Microsoft.PowerShell.* modules.
         • No external dependencies, no installs, no external parameters. Define default values if needed.
-        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block, 
+        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block,
         and a single well-defined exit point.
         • No explanations, comments about decisions, or extra lines before/after the code.
         • The script must be directly runnable as-is without modifications or external params.
@@ -177,7 +184,7 @@ plan_task = Task(
         "Exactly 6–9 bullet lines, each starting with '- ', ordered per the spec and grounded in the USER REQUEST."
     ),
     agent=planner,
-    markdown=False
+    markdown=False,
 )
 
 code_task = Task(
@@ -221,22 +228,22 @@ align_task = Task(
         "- Preserve behavior required by the plan and respect all INVARIANTS.\n\n"
         "STRICT OUTPUT FORMAT — reply with MINIFIED JSON ONLY (no prose, no code blocks):\n"
         "If already sufficiently aligned:\n"
-        "{\"status\":\"ok\",\"reason\":\"<=200 chars\"}\n"
+        '{"status":"ok","reason":"<=200 chars"}\n'
         "Otherwise (when concrete improvements are needed):\n"
-        "{\"status\":\"retry\",\"reason\":\"<=300 chars\",\"fix_notes\":\"- bullet 1\\n- bullet 2\\n- ...\"}\n\n"
+        '{"status":"retry","reason":"<=300 chars","fix_notes":"- bullet 1\\n- bullet 2\\n- ..."}\n\n'
         "Rules for fix_notes (when status=retry):\n"
-        "- 3–9 bullets, each starting with \"- \".\n"
+        '- 3–9 bullets, each starting with "- ".\n'
         "- Each bullet is a tiny, actionable delta \n"
         "- LET'S THINK STEP BY STEP; Never output lines starting with 'Thought:' or any reasoning.\n"
         "- Use inline backticks for short identifiers/tokens only;\n"
         "- Reference what/where to change by function/identifier names rather than line numbers (lines may shift).\n"
         "- Never remove or weaken the INVARIANTS; never add new dependencies; keep outputs/side-effects unchanged unless required by the invariants.\n\n"
         "Decision policy:\n"
-        "- Return status=\"ok\" when differences are purely cosmetic or do not improve functional/structural equivalence.\n"
-        "- Return status=\"retry\" only when small, safe deltas will materially improve equivalence or static-analysis outcomes."
+        '- Return status="ok" when differences are purely cosmetic or do not improve functional/structural equivalence.\n'
+        '- Return status="retry" only when small, safe deltas will materially improve equivalence or static-analysis outcomes.'
     ),
     expected_output=(
-        'A single JSON object with keys: '
+        "A single JSON object with keys: "
         'status=("ok"|"retry"), reason=string, and if status="retry": fix_notes as a bullet list string.'
     ),
     agent=aligner,
@@ -253,8 +260,8 @@ static_review_task = Task(
         "PSScriptAnalyzer REPORT (JSON):\n<REPORT>\n{report}\n</REPORT>\n\n"
         "HARD OUTPUT RULES:\n"
         "- Output MUST be a SINGLE minified JSON object. No prose. No markdown.\n"
-        "- PASS => {\"verdict\":\"pass\",\"reason\":\"<=240 chars\"}\n"
-        "- FAIL => {\"verdict\":\"fail\",\"reason\":\"<=240 chars\",\"fix_notes\":[\"<=10 items\"]}\n"
+        '- PASS => {"verdict":"pass","reason":"<=240 chars"}\n'
+        '- FAIL => {"verdict":"fail","reason":"<=240 chars","fix_notes":["<=10 items"]}\n'
         "- fix_notes must be concrete deltas (parse errors first). Do not add dependencies.\n"
     ),
     expected_output="A single minified JSON object with verdict pass/fail.",
@@ -263,6 +270,7 @@ static_review_task = Task(
 )
 
 # ============================== UTILS ===================================== #
+
 
 def _to_text(result) -> str:
     """Normalizes CrewAI results into plain text."""
@@ -275,7 +283,11 @@ def _to_text(result) -> str:
 def extract_powershell_code(text: str) -> str:
     """Extracts script code from a fenced markdown response, if present."""
     if "```" in text:
-        m = re.search(r"```(?:powershell|ps1|ps)?\s*(.*?)```", text, flags=re.DOTALL | re.IGNORECASE)
+        m = re.search(
+            r"```(?:powershell|ps1|ps)?\s*(.*?)```",
+            text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         if m:
             return m.group(1).strip()
         return re.sub(r"```", "", text, flags=re.DOTALL).strip()
@@ -296,6 +308,7 @@ def parse_jsonish(s: str) -> dict | list:
             pass
     return {}
 
+
 def parse_verdict_from_json(s: str) -> tuple[str, dict, str]:
     """Returns normalized verdict ('pass'|'fail'|'invalid'), parsed object, and raw text."""
     raw = (s or "").strip()
@@ -307,7 +320,11 @@ def parse_verdict_from_json(s: str) -> tuple[str, dict, str]:
     else:
         obj = {}
 
-    verdict = (obj.get("verdict") or obj.get("decision") or obj.get("status") or "").strip().lower()
+    verdict = (
+        (obj.get("verdict") or obj.get("decision") or obj.get("status") or "")
+        .strip()
+        .lower()
+    )
     if verdict in ("pass", "ok"):
         return "pass", obj, raw
     if verdict in ("fail", "retry"):
@@ -315,6 +332,7 @@ def parse_verdict_from_json(s: str) -> tuple[str, dict, str]:
 
     # formato non rispettato
     return "invalid", obj, raw
+
 
 def plan_to_invariants(plan_text: str) -> str:
     """Converts plan bullets into invariant bullets consumed downstream."""
@@ -326,9 +344,15 @@ def plan_to_invariants(plan_text: str) -> str:
     return "\n".join(lines) if lines else f"- {plan_text.strip()}"
 
 
-def build_coder_input_bundle(request: str, plan_text: str, invariants_text: str,
-                             current_code: str, fix_notes: str, iter_num: int,
-                             user_change_request: str = "") -> dict:
+def build_coder_input_bundle(
+    request: str,
+    plan_text: str,
+    invariants_text: str,
+    current_code: str,
+    fix_notes: str,
+    iter_num: int,
+    user_change_request: str = "",
+) -> dict:
     """Builds the payload expected by the coder task."""
     return {
         "request": request,
@@ -344,7 +368,11 @@ def build_coder_input_bundle(request: str, plan_text: str, invariants_text: str,
 def normalize_fix_notes(raw_fix_notes, enforce_bullets: bool = False) -> str:
     """Normalizes fix notes from either list or string format."""
     if isinstance(raw_fix_notes, list):
-        cleaned = [str(item).strip().lstrip("- ").strip() for item in raw_fix_notes if str(item).strip()]
+        cleaned = [
+            str(item).strip().lstrip("- ").strip()
+            for item in raw_fix_notes
+            if str(item).strip()
+        ]
         if enforce_bullets:
             return "\n".join(f"- {item}" for item in cleaned)
         return "\n".join(cleaned)
@@ -355,11 +383,11 @@ def normalize_fix_notes(raw_fix_notes, enforce_bullets: bool = False) -> str:
     return text
 
 
-
 class PSScriptAnalyzerRunner:
     """
     Runs PSScriptAnalyzer on the saved script and returns a JSON-ish dict with diagnostics.
     """
+
     def __init__(self, host_script_path: str, timeout_sec: int = 120):
         self.host_script_path = os.path.abspath(host_script_path)
         self.timeout = timeout_sec
@@ -419,7 +447,9 @@ $payload = [pscustomobject]@{{
 
 $payload | ConvertTo-Json -Depth 6
 """
-        with tempfile.NamedTemporaryFile('w', suffix='.ps1', delete=False, encoding='utf-8') as tf:
+        with tempfile.NamedTemporaryFile(
+            "w", suffix=".ps1", delete=False, encoding="utf-8"
+        ) as tf:
             tf.write(ps_code)
             temp_ps1 = tf.name
 
@@ -428,31 +458,50 @@ $payload | ConvertTo-Json -Depth 6
                 [shell, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", temp_ps1],
                 capture_output=True,
                 timeout=self.timeout,
-                text=True
+                text=True,
             )
             out = (proc.stdout or "").strip()
             try:
-                return json.loads(out) if out else {
-                    "success": False, "exit_code": -3, "stdout": out, "stderr": "Empty output from analyzer", "runner": "PSScriptAnalyzer", "diagnostics": []
-                }
+                return (
+                    json.loads(out)
+                    if out
+                    else {
+                        "success": False,
+                        "exit_code": -3,
+                        "stdout": out,
+                        "stderr": "Empty output from analyzer",
+                        "runner": "PSScriptAnalyzer",
+                        "diagnostics": [],
+                    }
+                )
             except Exception:
                 return {
                     "success": False,
                     "exit_code": -4,
                     "stdout": out,
-                    "stderr": (proc.stderr or "").strip() or "Invalid JSON from analyzer",
+                    "stderr": (proc.stderr or "").strip()
+                    or "Invalid JSON from analyzer",
                     "runner": "PSScriptAnalyzer",
-                    "diagnostics": []
+                    "diagnostics": [],
                 }
         except subprocess.TimeoutExpired:
             return {
-                "success": False, "exit_code": -1, "stdout": "", "stderr": "TimeoutExpired", "runner": "PSScriptAnalyzer", "diagnostics": []
+                "success": False,
+                "exit_code": -1,
+                "stdout": "",
+                "stderr": "TimeoutExpired",
+                "runner": "PSScriptAnalyzer",
+                "diagnostics": [],
             }
         finally:
-            try: os.remove(temp_ps1)
-            except Exception: pass
+            try:
+                os.remove(temp_ps1)
+            except Exception:
+                pass
+
 
 # ============================== MAIN ====================================== #
+
 
 def main():
     default_request = (
@@ -467,7 +516,7 @@ def main():
             i = args.index(flag)
             if i + 1 < len(args):
                 v = args[i + 1]
-                del args[i:i+2]
+                del args[i : i + 2]
                 return v
         return None
 
@@ -493,7 +542,7 @@ def main():
     max_align_rounds = 3
     max_global_iters = 3
 
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     script_code = ""
     script_path = ""
     fix_notes = "Initial implementation from the plan."
@@ -507,7 +556,9 @@ def main():
         print(f"Salvato: {path}")
         return path
 
-    align_crew = Crew(agents=[aligner], tasks=[align_task]) if ref_code.strip() else None
+    align_crew = (
+        Crew(agents=[aligner], tasks=[align_task]) if ref_code.strip() else None
+    )
 
     global_completed = False
     for g in range(1, max_global_iters + 1):
@@ -540,7 +591,9 @@ def main():
                 break
 
             if report.get("exit_code") == -2:
-                raise RuntimeError(report.get("stderr") or "PSScriptAnalyzer non disponibile.")
+                raise RuntimeError(
+                    report.get("stderr") or "PSScriptAnalyzer non disponibile."
+                )
 
             review_inputs = {
                 "request": request,
@@ -566,7 +619,9 @@ def main():
             print("--- STATIC FIX NOTES ---")
             print(fix_notes)
         else:
-            print("Static analysis did not pass within max iterations; continuing anyway.")
+            print(
+                "Static analysis did not pass within max iterations; continuing anyway."
+            )
 
         # === ALIGNMENT STAGE (global restart if fixes are needed) ===
         if ref_code.strip():
@@ -582,7 +637,11 @@ def main():
                 align_res = align_crew.kickoff(inputs=align_inputs)
                 align_raw = parse_jsonish(_to_text(align_res).strip())
                 if isinstance(align_raw, list):
-                    align_json = align_raw[0] if align_raw and isinstance(align_raw[0], dict) else {}
+                    align_json = (
+                        align_raw[0]
+                        if align_raw and isinstance(align_raw[0], dict)
+                        else {}
+                    )
                 elif isinstance(align_raw, dict):
                     align_json = align_raw
                 else:
@@ -590,17 +649,25 @@ def main():
                 status = (align_json.get("status") or "").lower()
 
                 if status == "ok":
-                    print("Alignment: il candidato è sufficientemente simile al reference.")
+                    print(
+                        "Alignment: il candidato è sufficientemente simile al reference."
+                    )
                     alignment_ok = True
                     break
 
-                fix_notes = normalize_fix_notes(align_json.get("fix_notes"), enforce_bullets=True)
+                fix_notes = normalize_fix_notes(
+                    align_json.get("fix_notes"), enforce_bullets=True
+                )
 
                 if not fix_notes:
-                    print("Alignment LLM: nessuna FIX NOTES fornita; interrompo l'allineamento.")
+                    print(
+                        "Alignment LLM: nessuna FIX NOTES fornita; interrompo l'allineamento."
+                    )
                     break
 
-                with open(f"alignnotes_{timestamp}_round{a}.txt", "w", encoding="utf-8") as f:
+                with open(
+                    f"alignnotes_{timestamp}_round{a}.txt", "w", encoding="utf-8"
+                ) as f:
                     f.write(fix_notes + "\n")
 
                 print("--- ALIGNMENT FIX NOTES ---")
@@ -614,12 +681,16 @@ def main():
 
             if alignment_restart:
                 if g == max_global_iters:
-                    print("Alignment retries exhausted; continuing with latest candidate.")
+                    print(
+                        "Alignment retries exhausted; continuing with latest candidate."
+                    )
                     global_completed = True
                     break
                 continue
 
-            raise RuntimeError("Alignment stage could not complete due to missing fix notes.")
+            raise RuntimeError(
+                "Alignment stage could not complete due to missing fix notes."
+            )
         else:
             global_completed = True
             break

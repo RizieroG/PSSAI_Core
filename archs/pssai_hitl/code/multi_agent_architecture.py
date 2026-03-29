@@ -11,17 +11,19 @@ from crewai import Agent, Task, Crew, LLM
 
 # ========================= OLLAMA / LiteLLM SETUP ========================= #
 
+
 def detect_base_url() -> str:
     env = os.environ.get("OLLAMA_BASE_URL") or os.environ.get("OLLAMA_API_BASE")
     if env:
         return env.rstrip("/")
     return "http://localhost:11434"
 
+
 BASE_URL = detect_base_url()
 
 # Models
 llm_planner = LLM(
-    model=f"ollama/dolphin3:8b",
+    model="ollama/dolphin3:8b",
     base_url=BASE_URL,
     temperature=0.5,
     max_tokens=8192,
@@ -29,7 +31,7 @@ llm_planner = LLM(
 )
 
 llm_coder = LLM(
-    model=f"ollama/gavineke/powershell-codex:latest",
+    model="ollama/gavineke/powershell-codex:latest",
     base_url=BASE_URL,
     temperature=0.2,
     max_tokens=8192,
@@ -37,7 +39,7 @@ llm_coder = LLM(
 )
 
 llm_reviewer = LLM(
-    model=f"ollama/llama3.1:8b",
+    model="ollama/llama3.1:8b",
     base_url=BASE_URL,
     temperature=0.2,
     max_tokens=8192,
@@ -45,7 +47,7 @@ llm_reviewer = LLM(
 )
 
 llm_change_planner = LLM(
-    model=f"ollama/dolphin3:8b",
+    model="ollama/dolphin3:8b",
     base_url=BASE_URL,
     temperature=0.5,
     max_tokens=8192,
@@ -62,7 +64,7 @@ planner = Agent(
     ),
     backstory=(
         """
-        You are the Planner in a Planner→Coder pipeline. Transform the user request 
+        You are the Planner in a Planner→Coder pipeline. Transform the user request
         into the smallest set of sequential, atomic, and testable instructions.
 
         Global ethos:
@@ -72,7 +74,7 @@ planner = Agent(
 
         Output format:
         • Obey the task spec exactly: return only 6–9 bullet lines starting with '- ' (no code, no JSON, no headings).
-        
+
         EXAMPLE 1:
         USER REQUEST: "Write a PowerShell script that open multiple popups using Windows Forms. It generates a random number of popups and displays a message in each popup."
         THOUGHT:
@@ -119,7 +121,7 @@ planner = Agent(
         """
     ),
     llm=llm_planner,
-    verbose=False
+    verbose=False,
 )
 
 coder = Agent(
@@ -128,14 +130,15 @@ coder = Agent(
         "Deliver exactly one self-contained, directly runnable PowerShell (.ps1) script "
         "that fulfills the Planner’s steps on a vanilla Windows host."
     ),
-    backstory=("""
+    backstory=(
+        """
         You are a Senior Software Engineer specialized in PowerShell scripting.
-        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs. 
+        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs.
         LET'S THINK STEP BY STEP
 
         Hard requirements:
-        • Use only built-in Microsoft.PowerShell.* modules. 
-        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block, 
+        • Use only built-in Microsoft.PowerShell.* modules.
+        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block,
         and a single well-defined exit point.
         • No explanations, comments about decisions, or extra lines before/after the code.
         • LET'S THINK STEP BY STEP
@@ -151,7 +154,9 @@ reviewer = Agent(
         "Given a PowerShell script and the PSScriptAnalyzer report, decide pass/fail. "
         "If fail, craft a minimal, precise FIX PROMPT for the Coder based strictly on parsing/syntax/rule errors."
     ),
-    backstory=("Senior Windows engineer & code reviewer. Diagnose parsing issues and propose surgical fixes."),
+    backstory=(
+        "Senior Windows engineer & code reviewer. Diagnose parsing issues and propose surgical fixes."
+    ),
     llm=llm_reviewer,
     verbose=False,
 )
@@ -193,7 +198,7 @@ plan_task = Task(
         "Exactly 6–9 bullet lines, each starting with '- ', ordered per the spec and grounded in the USER REQUEST."
     ),
     agent=planner,
-    markdown=False
+    markdown=False,
 )
 
 code_task = Task(
@@ -237,16 +242,16 @@ review_task = Task(
         "If pass (exit_code==0 and no diagnostics with RuleName ParseError/TokenizeError):\n"
         '{"status":"ok","reason":"short confirmation"}\n'
         "Else produce MINIMAL PATCH-STYLE FIXES that change executable behavior:\n"
-        '{'
+        "{"
         '"status":"retry",'
         '"reason":"<=400 chars explaining concrete failure (quote offending lines if useful)",'
         '"edits":[\n'
         '  {"op":"replace","find":"<exact snippet>","replace":"<new snippet>"},\n'
         '  {"op":"insert_after","anchor":"<unique line fragment>","code":"<code to insert>"},\n'
         '  {"op":"remove","find":"<exact snippet>"}\n'
-        '],'
+        "],"
         '"notes":"Do NOT remove invariants; fix parse/syntax errors first; keep minimal changes"\n'
-        '}\n'
+        "}\n"
         "Rules:\n"
         "- Edits MUST reference real code from <CODE>.\n"
         "- Prefer concrete PowerShell statements that address the specific diagnostics.\n"
@@ -286,6 +291,7 @@ change_plan_task = Task(
 
 # ============================== UTILS ===================================== #
 
+
 def _to_text(result) -> str:
     """
     Normalize any Crew/LLM result to a plain string, safely.
@@ -306,7 +312,11 @@ def _to_text(result) -> str:
 
 def extract_powershell_code(text: str) -> str:
     if "```" in text:
-        m = re.search(r"```(?:powershell|ps1|ps)?\s*(.*?)```", text, flags=re.DOTALL | re.IGNORECASE)
+        m = re.search(
+            r"```(?:powershell|ps1|ps)?\s*(.*?)```",
+            text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         if m:
             return m.group(1).strip()
         return re.sub(r"```", "", text, flags=re.DOTALL).strip()
@@ -326,6 +336,7 @@ def parse_jsonish(s: str) -> dict:
             pass
     return {}
 
+
 # clean up plan to only invariants
 def plan_to_invariants(plan_text: str) -> str:
     """
@@ -343,18 +354,26 @@ def plan_to_invariants(plan_text: str) -> str:
             lines.append(f"- {ln[2:]}")
     return "\n".join(lines) if lines else f"- {plan_text.strip()}"
 
+
 # Pack all context needed by the Coder task into a single dict.
-def build_coder_input_bundle(request: str, plan_text: str, invariants_text: str,
-                             current_code: str, fix_notes: str, iter_num: int,
-                             user_change_request: str = "") -> dict:
+def build_coder_input_bundle(
+    request: str,
+    plan_text: str,
+    invariants_text: str,
+    current_code: str,
+    fix_notes: str,
+    iter_num: int,
+    user_change_request: str = "",
+) -> dict:
     return {
-        "request": request, # What to build
+        "request": request,  # What to build
         "plan": plan_text,  # Natural-language plan
-        "invariants": invariants_text, # Must-have constraints/checklist
+        "invariants": invariants_text,  # Must-have constraints/checklist
         "current_code": current_code if current_code else "<none>",
-        "fix_notes": fix_notes, # Findings from static analysis/review
-        "iter_num": iter_num, # Iteration index for the Coder
-        "user_change_request": user_change_request or "<none>", # User free-text change request
+        "fix_notes": fix_notes,  # Findings from static analysis/review
+        "iter_num": iter_num,  # Iteration index for the Coder
+        "user_change_request": user_change_request
+        or "<none>",  # User free-text change request
     }
 
 
@@ -362,6 +381,7 @@ class PSScriptAnalyzerRunner:
     """
     Runs PSScriptAnalyzer on the saved script and returns a JSON-ish dict with diagnostics.
     """
+
     def __init__(self, host_script_path: str, timeout_sec: int = 120):
         self.host_script_path = os.path.abspath(host_script_path)
         self.timeout = timeout_sec
@@ -371,7 +391,6 @@ class PSScriptAnalyzerRunner:
             if shutil.which(exe):
                 return exe
         return "powershell"
-
 
     # --- How PSScriptAnalyzer is used here ---------------------------------------
     # Execute a PowerShell snippet that:
@@ -437,12 +456,18 @@ class PSScriptAnalyzerRunner:
 
         $payload | ConvertTo-Json -Depth 6
         """
-        with tempfile.NamedTemporaryFile('w', suffix='.ps1', delete=False, encoding='utf-8') as tf:
+        with tempfile.NamedTemporaryFile(
+            "w", suffix=".ps1", delete=False, encoding="utf-8"
+        ) as tf:
             tf.write(ps_code)
             temp_ps1 = tf.name
         try:
             start = time.time()
-            proc = subprocess.run([shell, "-NoProfile", "-File", temp_ps1], capture_output=True, timeout=self.timeout)
+            proc = subprocess.run(
+                [shell, "-NoProfile", "-File", temp_ps1],
+                capture_output=True,
+                timeout=self.timeout,
+            )
             dur_ms = int((time.time() - start) * 1000)
 
             def _dec(b: bytes) -> str:
@@ -474,7 +499,9 @@ class PSScriptAnalyzerRunner:
             except Exception:
                 pass
 
+
 # ============================== USER GATE ================================= #
+
 
 # get multi-line input from user until a line with only "END"
 def _prompt_multiline(prompt: str) -> str:
@@ -492,7 +519,9 @@ def _prompt_multiline(prompt: str) -> str:
     return "\n".join(lines).strip()
 
 
-def user_review_gate(request: str, plan_text: str, script_path: str, script_code: str) -> tuple[str, str]:
+def user_review_gate(
+    request: str, plan_text: str, script_path: str, script_code: str
+) -> tuple[str, str]:
     """
     Interactive human-in-the-loop gate for final approval or change requests.
 
@@ -513,7 +542,11 @@ def user_review_gate(request: str, plan_text: str, script_path: str, script_code
         print(f"  {ln}")
     print(f"\nScript saved at: {script_path}")
     while True:
-        choice = input("[A]ccept / [V]iew code here / [E]dit (request changes)? ").strip().lower()
+        choice = (
+            input("[A]ccept / [V]iew code here / [E]dit (request changes)? ")
+            .strip()
+            .lower()
+        )
         if choice in ("a", "accept"):
             return "accept", ""
         if choice in ("v", "view"):
@@ -522,7 +555,9 @@ def user_review_gate(request: str, plan_text: str, script_path: str, script_code
             print("----- SCRIPT END -----\n")
             continue
         if choice in ("e", "edit", "change"):
-            notes = _prompt_multiline("Describe the changes you want. Be specific (constants, order, outputs).")
+            notes = _prompt_multiline(
+                "Describe the changes you want. Be specific (constants, order, outputs)."
+            )
             if not notes:
                 print("No changes provided. Returning to menu.")
                 continue
@@ -532,10 +567,9 @@ def user_review_gate(request: str, plan_text: str, script_path: str, script_code
 
 # ============================== MAIN ====================================== #
 
+
 def main():
-    request = (
-        "Default request text."
-    )
+    request = "Default request text."
     if len(sys.argv) > 1:
         request = " ".join(sys.argv[1:])
 
@@ -552,10 +586,10 @@ def main():
     review_crew = Crew(agents=[reviewer], tasks=[review_task])
     change_crew = Crew(agents=[change_planner], tasks=[change_plan_task])
 
-    max_auto_fix_iters = 3    # static-analysis iterations
-    max_user_rounds    = 5    # user change rounds
+    max_auto_fix_iters = 3  # static-analysis iterations
+    max_user_rounds = 5  # user change rounds
 
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     script_code = ""
     fix_notes = "Initial implementation from the plan."
     iter_num = 0
@@ -615,7 +649,9 @@ def main():
                 or f"Fix the previous script to satisfy the plan. Errors:\n{report.get('stderr','')}\nDo NOT remove any invariant. Apply minimal changes."
             )
             if it == max_auto_fix_iters:
-                print("Auto-fix limit reached — switching to user gate with latest version.")
+                print(
+                    "Auto-fix limit reached — switching to user gate with latest version."
+                )
 
     # ================= USER REVIEW GATE ================= #
     user_round = 0
@@ -643,7 +679,9 @@ def main():
         fix_notes = _to_text(change_res).strip()
         print("--- FIX NOTES (from change_planner) ---")
         print(fix_notes)
-        with open(f"fixnotes_{timestamp}_round{user_round}.txt", "w", encoding="utf-8") as f:
+        with open(
+            f"fixnotes_{timestamp}_round{user_round}.txt", "w", encoding="utf-8"
+        ) as f:
             f.write(fix_notes + "\n")
 
         if not fix_notes:
@@ -687,13 +725,10 @@ def main():
             continue
         else:
             print("Reviewer: static analysis failed after applying user changes.")
-            tech_notes = (
-                decision_ai.get("reason", "").strip()
-                or report.get("stderr", "")
+            tech_notes = decision_ai.get("reason", "").strip() or report.get(
+                "stderr", ""
             )
-            fix_notes = (
-                f"Apply minimal fixes to pass static analysis and keep invariants. Technical notes: {tech_notes}"
-            )
+            fix_notes = f"Apply minimal fixes to pass static analysis and keep invariants. Technical notes: {tech_notes}"
             # Keep loop; next iteration will use these fix notes on top of user deltas
 
 

@@ -50,7 +50,7 @@ Ogni Agent svolge un ruolo specifico nel ciclo di generazione:
 
 - **Multi-Agent Collaboration**: pipeline di agenti specializzati con ruoli indipendenti.
 
-- **Chain-of-Thought reasoning**: usato dal Planner e Coder. 
+- **Chain-of-Thought reasoning**: usato dal Planner e Coder.
 
 - **Self-Evaluation**: uso di PSScriptAnalyzer come validatore esterno del codice.
 

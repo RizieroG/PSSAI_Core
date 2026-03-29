@@ -11,7 +11,9 @@ def _require_env(name: str) -> str:
     """Verifica che una variabile d'ambiente richiesta sia presente."""
     value = os.environ.get(name, "").strip()
     if not value:
-        raise EnvironmentError(f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY).")
+        raise EnvironmentError(
+            f"Missing env var {name}. Set it before running (e.g., OPENAI_API_KEY)."
+        )
     return value
 
 
@@ -122,23 +124,23 @@ align_task = Task(
         "- Preserve behavior required by the plan and respect all INVARIANTS.\n\n"
         "STRICT OUTPUT FORMAT — reply with MINIFIED JSON ONLY (no prose, no code blocks):\n"
         "If already sufficiently aligned:\n"
-        "{\"status\":\"ok\",\"reason\":\"<=200 chars\"}\n"
+        '{"status":"ok","reason":"<=200 chars"}\n'
         "Otherwise (when concrete improvements are needed):\n"
-        "{\"status\":\"retry\",\"reason\":\"<=300 chars\",\"fix_notes\":\"- bullet 1\\n- bullet 2\\n- ...\"}\n\n"
+        '{"status":"retry","reason":"<=300 chars","fix_notes":"- bullet 1\\n- bullet 2\\n- ..."}\n\n'
         "Rules for fix_notes (when status=retry):\n"
-        "- 3–9 bullets, each starting with \"- \".\n"
+        '- 3–9 bullets, each starting with "- ".\n'
         "- Each bullet is a tiny, actionable delta\n"
         "- LET'S THINK STEP BY STEP; Never output lines starting with 'Thought:' or any reasoning.\n"
         "- Use inline backticks for short identifiers/tokens only;\n"
         "- Reference what/where to change by function/identifier names rather than line numbers (lines may shift).\n"
         "- Never remove or weaken the INVARIANTS; never add new dependencies; keep outputs/side-effects unchanged unless required by the invariants.\n\n"
         "Decision policy:\n"
-        "- Return status=\"ok\" when differences are purely cosmetic or do not improve functional/structural equivalence.\n"
-        "- Return status=\"retry\" only when small, safe deltas will materially improve equivalence or static-analysis outcomes."
+        '- Return status="ok" when differences are purely cosmetic or do not improve functional/structural equivalence.\n'
+        '- Return status="retry" only when small, safe deltas will materially improve equivalence or static-analysis outcomes.'
     ),
     expected_output=(
         "A single JSON object with keys: "
-        "status=(\"ok\"|\"retry\"), reason=string, and if status=\"retry\": fix_notes as a bullet list string."
+        'status=("ok"|"retry"), reason=string, and if status="retry": fix_notes as a bullet list string.'
     ),
     agent=aligner,
     markdown=False,
@@ -158,7 +160,11 @@ def _to_text(result) -> str:
 def extract_powershell_code(text: str) -> str:
     """Estrae il corpo PowerShell da eventuali blocchi markdown."""
     if "```" in text:
-        match = re.search(r"```(?:powershell|ps1|ps)?\s*(.*?)```", text, flags=re.DOTALL | re.IGNORECASE)
+        match = re.search(
+            r"```(?:powershell|ps1|ps)?\s*(.*?)```",
+            text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         if match:
             return match.group(1).strip()
         return re.sub(r"```", "", text, flags=re.DOTALL).strip()
@@ -205,7 +211,9 @@ def build_coder_input_bundle(
 def normalize_fix_notes(raw_fix_notes) -> str:
     """Normalizza FIX NOTES in una stringa multilinea."""
     if isinstance(raw_fix_notes, list):
-        return "\n".join(str(item).strip() for item in raw_fix_notes if str(item).strip())
+        return "\n".join(
+            str(item).strip() for item in raw_fix_notes if str(item).strip()
+        )
     return str(raw_fix_notes or "").strip()
 
 
@@ -226,7 +234,7 @@ def main() -> int:
             index = args.index(flag)
             if index + 1 < len(args):
                 value = args[index + 1]
-                del args[index:index + 2]
+                del args[index : index + 2]
                 return value
         return None
 
@@ -243,7 +251,9 @@ def main() -> int:
     invariants_text = ""
 
     code_crew = Crew(agents=[coder], tasks=[code_task])
-    align_crew = Crew(agents=[aligner], tasks=[align_task]) if ref_code.strip() else None
+    align_crew = (
+        Crew(agents=[aligner], tasks=[align_task]) if ref_code.strip() else None
+    )
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     script_code = ""
@@ -318,7 +328,9 @@ def main() -> int:
                 script_code = extract_powershell_code(_to_text(code_result))
                 script_path = save_script(script_code, iter_num)
             else:
-                print("Alignment LLM: nessuna FIX NOTES fornita; nessuna azione eseguita.")
+                print(
+                    "Alignment LLM: nessuna FIX NOTES fornita; nessuna azione eseguita."
+                )
 
     print("Script finale:", script_path)
     return 0

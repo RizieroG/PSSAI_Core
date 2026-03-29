@@ -101,7 +101,7 @@ planner = Agent(
     ),
     backstory=(
         """
-        You are the Planner in a Planner→Coder pipeline. Transform the user request 
+        You are the Planner in a Planner→Coder pipeline. Transform the user request
         into the smallest set of sequential, atomic, and testable instructions.
 
         Global ethos:
@@ -111,7 +111,7 @@ planner = Agent(
 
         Output format:
         • Obey the task spec exactly: return only 6–9 bullet lines starting with '- ' (no code, no JSON, no headings).
-        
+
         EXAMPLE 1:
         USER REQUEST: "Write a PowerShell script that open multiple popups using Windows Forms. It generates a random number of popups and displays a message in each popup."
         THOUGHT:
@@ -169,12 +169,12 @@ coder = Agent(
     ),
     backstory=("""
         You are a Senior Software Engineer specialized in PowerShell scripting.
-        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs. 
+        Your output MUST be only the final .ps1 file contents — no markdown, no prose, no fences, no placeholders, no TODOs.
         LET'S THINK STEP BY STEP
 
         Hard requirements:
-        • Use only built-in Microsoft.PowerShell.* modules. 
-        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block, 
+        • Use only built-in Microsoft.PowerShell.* modules.
+        • Structure the script for reliability: optional Param() (only if inputs are explicitly required), helper functions, main execution block,
         and a single well-defined exit point.
         • No explanations, comments about decisions, or extra lines before/after the code.
         • LET'S THINK STEP BY STEP
@@ -613,7 +613,7 @@ def main() -> int:
 
         if report.get("success"):
             print("Reviewer: OK (script accettato dalla fase tecnica).")
-            break          
+            break
         else:
             review_res = review_crew.kickoff(inputs=review_inputs)
             decision = parse_jsonish(_to_text(review_res).strip())
