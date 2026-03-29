@@ -1,3 +1,0 @@
-crewai>=0.61.0
-litellm>=1.52.0
-openai>=1.40.0
