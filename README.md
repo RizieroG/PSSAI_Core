@@ -4,23 +4,26 @@ Repository di ricerca per la generazione e validazione di script PowerShell con 
 
 ## Table of Contents
 
-- [Stato Repository](#stato-repository)
-- [Struttura Repository](#struttura-repository)
-- [Architetture Attive (`archs/`)](#architetture-attive-archs)
-- [Prerequisiti Comuni](#prerequisiti-comuni)
-- [Quick Start](#quick-start)
-  - [Esempio pipeline completa](#esempio-pipeline-completa)
-  - [Esempio variante senza gate statico](#esempio-variante-senza-gate-statico)
-  - [Esempio solo coder](#esempio-solo-coder)
-- [Risultati Sperimentali](#risultati-sperimentali)
-- [Campione Sperimentale](#campione-sperimentale)
-- [Metriche Utilizzate](#metriche-utilizzate)
-  - [1) Similarita semantica](#1-similarita-semantica)
-  - [2) Analisi statica](#2-analisi-statica)
-  - [3) Analisi dinamica](#3-analisi-dinamica)
-- [Componenti Deprecati](#componenti-deprecati)
-- [Tecniche utilizzate](#tecniche-utilizzate)
-- [Note](#note)
+- [PSSAI Core](#pssai-core)
+  - [Table of Contents](#table-of-contents)
+  - [Stato Repository](#stato-repository)
+  - [Struttura Repository](#struttura-repository)
+  - [Architetture Attive (`archs/`)](#architetture-attive-archs)
+  - [Prerequisiti Comuni](#prerequisiti-comuni)
+  - [Quick Start](#quick-start)
+    - [Esempio pipeline completa](#esempio-pipeline-completa)
+    - [Esempio variante senza gate statico](#esempio-variante-senza-gate-statico)
+    - [Esempio solo coder](#esempio-solo-coder)
+  - [Risultati Sperimentali](#risultati-sperimentali)
+  - [Campione Sperimentale](#campione-sperimentale)
+  - [Metriche Utilizzate](#metriche-utilizzate)
+    - [1) Similarita semantica](#1-similarita-semantica)
+    - [2) Analisi statica](#2-analisi-statica)
+    - [3) Analisi dinamica](#3-analisi-dinamica)
+  - [Componenti Deprecati](#componenti-deprecati)
+  - [Tecniche utilizzate](#tecniche-utilizzate)
+  - [Licenze](#licenze)
+  - [Note](#note)
 
 ## Stato Repository
 
@@ -162,6 +165,10 @@ La valutazione runtime confronta il comportamento atteso e osservato (regole Sig
 - **Analisi statica automatica** con `PSScriptAnalyzer` e metriche di correttezza sintattica.
 - **Osservabilita del workflow** con tracciamento di transizioni, tempi e output (`observability_*.json`).
 - **Human-in-the-Loop** per raffinamento manuale.
+
+## Licenze
+
+- Codice sorgente: [MIT License](LICENSE)
 
 ## Note
 
