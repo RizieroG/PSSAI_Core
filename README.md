@@ -1,4 +1,11 @@
+<p align="center">
+  <img src="img/pssai_core_logo.png" alt="PSSAI Core Logo" width="400" />
+</p>
+
 # PSSAI Core
+
+[![License](https://img.shields.io/github/license/RizieroG/PSSAI_Core)](LICENSE)
+[![Tag](https://img.shields.io/github/v/tag/RizieroG/PSSAI_Core?sort=semver)](https://github.com/RizieroG/PSSAI_Core/tags)
 
 Repository di ricerca per la generazione e validazione di script PowerShell con pipeline agentiche basate su CrewAI.
 
