@@ -28,7 +28,7 @@ _File sorgente: `report_global.xlsx`_
 | Contesto | Label Set | Exact Match Ratio | Jaccard Mean Index | Dice Index | Mean Symmetric Difference |
 | --- | --- | ---: | ---: | ---: | ---: |
 | Sysmon | Rule IDs | 0.79 | 0.85 | 0.88 | 0.74 |
-| Sysmon | ATT&CK Tags | 0.81 | 0.88 | 0.91 | 0.34 |
+| Sysmon | ATT&CK Tags | 0.70 | 0.83 | 0.88 | 0.40 |
 | PWSH | Rule IDs | 0.24 | 0.61 | 0.71 | 2.42 |
 | PWSH | ATT&CK Tags | 0.53 | 0.80 | 0.87 | 0.63 |
 
