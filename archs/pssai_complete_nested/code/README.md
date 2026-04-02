@@ -27,7 +27,7 @@ Il flusso principale e implementato in `multi_agent_architecture.py`.
 6. In fase di `Alignment` (se `--ref` e presente), l'`Aligner` confronta candidato e reference:
    - se `status=ok`, il flusso termina;
    - se `status=retry`, vengono applicate `fix_notes` di allineamento tramite `Coder` e il flusso riparte dal gate statico, consumando una iterazione globale.
-7. L'output finale e lo script più recente.
+7. L'output finale è lo script più recente.
 
 ## Esecuzione Rapida
 ```bash

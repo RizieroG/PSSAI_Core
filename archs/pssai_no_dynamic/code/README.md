@@ -24,7 +24,7 @@ Il flusso principale e implementato in `multi_agent_architecture.py`.
 5. Se e presente `--ref`, viene eseguito lo stage di `Alignment`:
    - se `status=ok`, il flusso termina;
    - se `status=retry`, vengono generate `fix_notes` di allineamento e parte una nuova iterazione globale (entro i limiti impostati).
-6. L'output finale e lo script più recente.
+6. L'output finale è lo script più recente.
 
 ## Esecuzione Rapida
 ```bash

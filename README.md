@@ -17,7 +17,7 @@ Repository di ricerca per la generazione e validazione di script PowerShell con 
   - [Risultati Sperimentali](#risultati-sperimentali)
   - [Campione Sperimentale](#campione-sperimentale)
   - [Metriche Utilizzate](#metriche-utilizzate)
-    - [1) Similarita semantica](#1-similarita-semantica)
+    - [1) Code Similarity](#1-code-similarity)
     - [2) Analisi statica](#2-analisi-statica)
     - [3) Analisi dinamica](#3-analisi-dinamica)
   - [Componenti Deprecati](#componenti-deprecati)
@@ -103,7 +103,7 @@ python multi_agent_architecture.py "Descrizione dello script da generare"
 
 ## Campione Sperimentale
 
-Il campione usato nell'analisi sperimentale e composto da 50 script PowerShell di riferimento (Ground Truth), distribuiti in 5 categorie malware:
+Il campione usato nell'analisi sperimentale è composto da 50 script PowerShell di riferimento (Ground Truth), distribuiti in 5 categorie malware:
 
 - Backdoor: 10
 - Downloader: 10
@@ -111,7 +111,7 @@ Il campione usato nell'analisi sperimentale e composto da 50 script PowerShell d
 - Privilege Escalation: 10
 - Credential Stealer: 10
 
-Per la lunghezza del codice, il dataset e stato anche segmentato in:
+Per la lunghezza del codice, il dataset è stato anche segmentato in:
 
 - Script brevi: 28 (meno di 10 righe)
 - Script lunghi: 22 (10 righe o piu)
@@ -122,11 +122,11 @@ Le analisi sono state condotte sia in forma aggregata (globale) sia disaggregata
 
 Le metriche seguono tre livelli complementari.
 
-### 1) Similarita semantica
+### 1) Code Similarity
 
 - `CrystalBLEU`: variante di BLEU per code generation che riduce il peso degli n-grammi banali e valorizza quelli distintivi, migliorando la misura della similarita logico-strutturale.
-- `METEOR / METEOR-L`: misura piu flessibile del matching esatto; cattura meglio equivalenze funzionali anche con piccole variazioni lessicali o di forma.
-- `chrF`: similarita a livello di carattere; utile per codice e naming tecnico, dove minime variazioni sintattiche possono alterare i token ma non sempre la vicinanza morfologica.
+- `METEOR / METEOR-L`: misura più flessibile del matching esatto; cattura meglio equivalenze funzionali anche con piccole variazioni lessicali o di forma.
+- `chrF`: similarità a livello di carattere; utile per codice e naming tecnico, dove minime variazioni sintattiche possono alterare i token ma non sempre la vicinanza morfologica.
 
 ### 2) Analisi statica
 
@@ -148,7 +148,7 @@ La valutazione runtime confronta il comportamento atteso e osservato (regole Sig
 
 > [!WARNING]
 > I seguenti percorsi sono deprecati dal 22 marzo 2026 e non sono piu mantenuti.
-> Usare solo per storico/riproducibilita.
+> Usare solo per storico/riproducibilità.
 
 - [evaluation_metrics/README.md](evaluation_metrics/README.md)
 - [pssai_full_automation_dynamic_analysis/code/README.md](pssai_full_automation_dynamic_analysis/code/README.md)
