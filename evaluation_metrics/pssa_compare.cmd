@@ -81,7 +81,7 @@ for %%F in ("%DIR%\example_*.ps1") do (
       rem Invoca lo script PowerShell che fa il confronto e appende al CSV
       powershell -NoProfile -ExecutionPolicy Bypass -File "%HELPER%" ^
         -Ref "!REF!" -Cand "!CAND!" -Number !N! -CsvPath "%CSV%" %OPT_SETTINGS% %OPT_ART%
-      
+
       rem Controlla l’esito della chiamata PowerShell
       if errorlevel 1 (
         echo [WARN] N=!N!: confronto fallito

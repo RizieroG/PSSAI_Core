@@ -1,205 +1,176 @@
-# Multi-Agent System for PowerShell Code Generation <!-- omit in toc -->
+# PSSAI Core
 
-## Table of Contents <!-- omit in toc -->
-<!-- TOC -->
-- [Overview](#overview)
-- [Struttura della repository](#struttura-della-repository)
-- [Architetture](#architetture)
-  - [Visione generale del sistema (HitL)](#visione-generale-del-sistema-hitl)
-  - [Solo analisi statica](#solo-analisi-statica)
-  - [Analisi statica + dinamica](#analisi-statica--dinamica)
-- [Pipeline e workflow](#pipeline-e-workflow)
-  - [Static analysis (full automation)](#static-analysis-full-automation)
-  - [Dynamic analysis (full automation)](#dynamic-analysis-full-automation)
-  - [Human-in-the-loop](#human-in-the-loop)
-- [Risultati e metriche ottenute](#risultati-e-metriche-ottenute)
-  - [Report statici (PSScriptAnalyzer)](#report-statici-psscriptanalyzer)
-  - [Metriche testuali (ottenute)](#metriche-testuali-ottenute)
-  - [Risultati dinamici (psandman)](#risultati-dinamici-psandman)
-  - [Esempi di metriche dinamiche](#esempi-di-metriche-dinamiche)
-    - [Backdoor - example\_92](#backdoor---example_92)
-    - [Privilege Escalation - example\_351](#privilege-escalation---example_351)
-- [Tecniche utilizzate](#tecniche-utilizzate)
-- [Note](#note)
-<!-- /TOC -->
+Repository di ricerca per la generazione e validazione di script PowerShell con pipeline agentiche basate su CrewAI.
 
-## Overview
+## Table of Contents
 
-Questo repository raccoglie un sistema agentico multi-ruolo basato su CrewAI per generare,
-valutare e correggere automaticamente codice PowerShell. Sono presenti tre varianti operative:
+- [PSSAI Core](#pssai-core)
+  - [Table of Contents](#table-of-contents)
+  - [Stato Repository](#stato-repository)
+  - [Struttura Repository](#struttura-repository)
+  - [Architetture Attive (`archs/`)](#architetture-attive-archs)
+  - [Prerequisiti Comuni](#prerequisiti-comuni)
+  - [Quick Start](#quick-start)
+    - [Esempio pipeline completa](#esempio-pipeline-completa)
+    - [Esempio variante senza gate statico](#esempio-variante-senza-gate-statico)
+    - [Esempio solo coder](#esempio-solo-coder)
+  - [Risultati Sperimentali](#risultati-sperimentali)
+  - [Campione Sperimentale](#campione-sperimentale)
+  - [Metriche Utilizzate](#metriche-utilizzate)
+    - [1) Code Similarity](#1-code-similarity)
+    - [2) Analisi statica](#2-analisi-statica)
+    - [3) Analisi dinamica](#3-analisi-dinamica)
+  - [Componenti Deprecati](#componenti-deprecati)
+  - [Tecniche utilizzate](#tecniche-utilizzate)
+  - [Licenze](#licenze)
+  - [Note](#note)
 
-- **Full automation con analisi statica** (PSScriptAnalyzer).
-- **Full automation con analisi statica + dinamica** (psandman).
-- **Human-in-the-Loop** con gate utente per revisioni mirate.
+## Stato Repository
 
-Ogni variante ha una cartella dedicata con codice, README specifici e risultati generati.
+Ultimo aggiornamento:
 
-## Struttura della repository
+- Le architetture attive sono organizzate sotto `archs/`.
+- Le vecchie pipeline `pssai_full_automation_*` e il toolkit `evaluation_metrics` sono marcati come deprecati e mantenuti solo per storico/riproducibilita.
 
-- `pssai_full_automation_static_analysis/`
-  - `code/`: entrypoint OpenAI/Ollama + README d'uso.
-  - `risultati_statici/`: report PSScriptAnalyzer e metriche testuali (CSV/XLSX).
-  - `risultati_dinamici/`: log e report di esecuzione (per categoria).
-- `pssai_full_automation_dynamic_analysis/`
-  - `code/`: entrypoint OpenAI per pipeline dinamica + README d'uso.
-  - `risultati_statici/`: report PSScriptAnalyzer + metriche testuali (XLSX).
-  - `risultati_dinamici/`: log psandman ed evidenze runtime (XML/EVTX/XLSX).
-- `pssai_hitl/`
-  - `code/`: variante con interazione utente (HITL) + README d'uso.
-  - `risultati_statici/`: report statici e metriche (XLSX).
-- `evaluation_metrics/`
-  - toolkit per tokenizzazione e calcolo metriche (BLEU/ROUGE/METEOR/EditDistance/chrF) + README.
+## Struttura Repository
+
+- `archs/`
+  - Contiene le varianti architetturali attive e i rispettivi risultati.
 - `img/`
-  - diagrammi architetturali del sistema.
-- `README.md`
-  - questo documento (panoramica completa della repository).
+  - Diagrammi architetturali usati nella documentazione.
+- `evaluation_metrics/` (deprecato)
+  - Toolkit storico di metriche.
+- `pssai_full_automation_dynamic_analysis/` (deprecato)
+  - Pipeline storica full automation con focus dinamico.
+- `pssai_full_automation_static_analysis/` (deprecato)
+  - Pipeline storica full automation con focus statico.
 
-## Architetture
+## Architetture Attive (`archs/`)
 
-### Visione generale del sistema (HitL)
-![Architettura del sistema](./img/architettura_sistema.png)
+| Architettura | Focus pipeline | Documentazione | Risultati |
+| --- | --- | --- | --- |
+| `pssai_solo_coder` | Solo Coder, single-pass | [code/README](archs/pssai_solo_coder/code/README.md) | [risultati/README](archs/pssai_solo_coder/risultati/README.md) |
+| `pssai_coder_judger` | Coder + Aligner (judger) | [code/README](archs/pssai_coder_judger/code/README.md) | [risultati/README](archs/pssai_coder_judger/risultati/README.md) |
+| `pssai_no_dynamic` | Planning + coding + gate statico + alignment | [code/README](archs/pssai_no_dynamic/code/README.md) | [risultati/README](archs/pssai_no_dynamic/risultati/README.md) |
+| `pssai_no_static` | Planning + coding + gate dinamico + alignment | [code/README](archs/pssai_no_static/code/README.md) | [risultati/README](archs/pssai_no_static/risultati/README.md) |
+| `pssai_no_judger` | Planning + statico + dinamico (senza aligner) | [code/README](archs/pssai_no_judger/code/README.md) | [risultati/README](archs/pssai_no_judger/risultati/README.md) |
+| `pssai_complete` | Pipeline completa: statico + dinamico + alignment | [code/README](archs/pssai_complete/code/README.md) | [risultati/README](archs/pssai_complete/risultati/README.md) |
+| `pssai_complete_nested` | Completa con restart innestato | [code/README](archs/pssai_complete_nested/code/README.md) | [risultati/README](archs/pssai_complete_nested/risultati/README.md) |
+| `pssai_hitl` | Variante Human-in-the-Loop | [code/README](archs/pssai_hitl/code/README.md) | [risultati_statici](archs/pssai_hitl/risultati_statici/) |
 
-### Solo analisi statica
-![Architettura del sistema - solo analisi statica](./img/architettura_sistema_solo_analisi_statica.png)
+## Prerequisiti Comuni
 
-### Analisi statica + dinamica
-![Architettura del sistema - analisi statica e dinamica](./img/architettura_sistema_analisi_statica_e_dinamica.png)
+- Python 3.x
+- Installazione dipendenze nella cartella `code` dell'architettura scelta: `pip install -r requirements.txt`
+- Variabile ambiente `OPENAI_API_KEY` per le varianti OpenAI
+- `PSScriptAnalyzer` richiesto dalle varianti con gate statico
+- `psandman` richiesto dalle varianti con gate dinamico (`pssai_complete`, `pssai_complete_nested`, `pssai_no_static`, `pssai_no_judger`)
 
-## Pipeline e workflow
+Nota: alcune varianti con analisi dinamica usano percorsi `psandman` hardcoded nei file Python. Verificare le costanti all'inizio dell'entrypoint prima dell'esecuzione.
 
-### Static analysis (full automation)
-1. **Planning**: il Planner genera un piano in 6-9 bullet.
-2. **Coding**: il Coder produce lo script PowerShell.
-3. **Static analysis**: PSScriptAnalyzer valida lo script.
-4. **Review + fix loop**: il Reviewer emette fix notes; il Coder rigenera lo script (fino a `max_auto_fix_iters`).
-5. **Alignment opzionale**: con `--ref`, l'Aligner propone fix notes per avvicinare lo script al reference.
+## Quick Start
 
-### Dynamic analysis (full automation)
-1. **Planning + Coding**: come nel flusso statico.
-2. **Esecuzione sandbox**: psandman esegue lo script in VM e produce XML/EVTX.
-3. **Dynamic review**: un reviewer valuta la coerenza tra piano e log runtime.
-4. **Fix loop dinamico**: se fallisce, il Change Planner genera fix notes; il Coder rigenera lo script.
-5. **Alignment + gate statico**: se usi `--ref`, l'Aligner propone fix notes e si esegue PSScriptAnalyzer post-allineamento.
+### Esempio pipeline completa
 
-### Human-in-the-loop
-1. **Planning + Coding + Static analysis**: identico alla pipeline statica.
-2. **Gate utente**: l'utente puo accettare, visualizzare o richiedere modifiche.
-3. **Change Planner**: le richieste umane diventano fix notes per il Coder.
-4. **Output finale**: lo script viene salvato dopo approvazione.
+```bash
+cd archs/pssai_complete/code
+pip install -r requirements.txt
+python multi_agent_architecture.py "Descrizione dello script da generare"
+python multi_agent_architecture.py --ref path\to\reference.ps1 "Descrizione dello script da generare"
+```
 
-## Risultati e metriche ottenute
+### Esempio variante senza gate statico
 
-### Report statici (PSScriptAnalyzer)
-I risultati statici sono salvati in CSV/XLSX, ad esempio:
-- `pssai_full_automation_static_analysis/risultati_statici/pssa_results.csv`
-  - colonne: errori/warning/info per reference e candidato, differenze e regole comuni/uniche.
-- `pssai_full_automation_dynamic_analysis/risultati_statici/pssa_results_readble.xlsx`
-- `pssai_hitl/risultati_statici/pssa_results_readble.xlsx`
+```bash
+cd archs/pssai_no_static/code
+pip install -r requirements.txt
+python multi_agent_architecture_obs.py "Descrizione dello script da generare"
+```
 
-### Metriche testuali (ottenute)
-Le metriche di similarita tra script candidato e riferimento sono calcolate con il toolkit
-in `evaluation_metrics/` e salvate in:
-- `pssai_full_automation_static_analysis/risultati_statici/results_eval_complete_readable.xlsx`
-- `pssai_full_automation_dynamic_analysis/risultati_statici/results_eval_complete_percentage.xlsx`
-- `pssai_hitl/risultati_statici/results_eval_percentages.xlsx`
+### Esempio solo coder
 
-Metriche presenti nei report:
-- **BLEU-1 / BLEU-2 / BLEU-4**
-- **ROUGE-L** (Precision/Recall/F1)
-- **METEOR**
-- **Edit Distance** (raw/normalized)
-- **chrF**
+```bash
+cd archs/pssai_solo_coder/code
+pip install -r requirements.txt
+python multi_agent_architecture.py "Descrizione dello script da generare"
+```
 
-### Risultati dinamici (psandman)
-Le evidenze runtime sono organizzate per categoria e codice, ad esempio:
-- `pssai_full_automation_dynamic_analysis/risultati_dinamici/<Categoria>/code_*_train/`
-- `pssai_full_automation_static_analysis/risultati_dinamici/<Categoria>/code_*/`
+## Risultati Sperimentali
 
-Categorie presenti:
-- Backdoor
-- Credential Stealer
-- Downloader
-- Launcher Injection
-- Privilege Escalation
+- Per le varianti in `archs/*/risultati/` sono disponibili file `report_*.xlsx` per categoria e globale.
+- Ogni cartella `risultati` include un `README.md` con sintesi metriche.
+- Per `pssai_hitl` i risultati statici sono in `archs/pssai_hitl/risultati_statici/`.
 
-Tipicamente ogni cartella contiene:
-- log XML/EVTX generati da psandman
-- `report.xlsx` con sintesi dell'esecuzione
-- (quando presente) `evaluation-suite-metriche.txt` con metriche aggregate
+## Campione Sperimentale
 
-### Esempi di metriche dinamiche
+Il campione usato nell'analisi sperimentale è composto da 50 script PowerShell di riferimento (Ground Truth), distribuiti in 5 categorie malware:
 
-Confronto tra:
-- **Static**: full automation con sola analisi statica
-- **Dynamic**: full automation con analisi statica + dinamica
+- Backdoor: 10
+- Downloader: 10
+- Launcher Injection: 10
+- Privilege Escalation: 10
+- Credential Stealer: 10
 
-#### Backdoor - example_92
+Per la lunghezza del codice, il dataset è stato anche segmentato in:
 
-| Blocco                           | Metrica  | Static | Dynamic |
-|----------------------------------|----------|--------|---------|
-| Semantic - ATT&CK Tags           | Micro-F1 | 0.91   | 0.88    |
-| Semantic - ATT&CK Tags           | Macro-F1 | 0.83   | 0.79    |
-| Semantic - ATT&CK Tags           | Jaccard  | 0.83   | 0.79    |
-| Semantic - ATT&CK Tags           | Hamming  | 0.17   | 0.21    |
-| Semantic - Triggered Rules       | Micro-F1 | 0.75   | 0.33    |
-| Semantic - Triggered Rules       | Macro-F1 | 0.60   | 0.20    |
-| Semantic - Triggered Rules       | Jaccard  | 0.60   | 0.20    |
-| Semantic - Triggered Rules       | Hamming  | 0.40   | 0.80    |
-| Dynamic Sysmon - ATT&CK Tags     | Micro-F1 | 1.00   | 1.00    |
-| Dynamic Sysmon - ATT&CK Tags     | Macro-F1 | 1.00   | 1.00    |
-| Dynamic Sysmon - ATT&CK Tags     | Jaccard  | 1.00   | 1.00    |
-| Dynamic Sysmon - ATT&CK Tags     | Hamming  | 0.00   | 0.00    |
-| Dynamic Sysmon - Triggered Rules | Micro-F1 | 1.00   | 1.00    |
-| Dynamic Sysmon - Triggered Rules | Macro-F1 | 1.00   | 1.00    |
-| Dynamic Sysmon - Triggered Rules | Jaccard  | 1.00   | 1.00    |
-| Dynamic Sysmon - Triggered Rules | Hamming  | 0.00   | 0.00    |
-| Dynamic PWSH - ATT&CK Tags       | Micro-F1 | 1.00   | 0.27    |
-| Dynamic PWSH - ATT&CK Tags       | Macro-F1 | 1.00   | 0.15    |
-| Dynamic PWSH - ATT&CK Tags       | Jaccard  | 1.00   | 0.15    |
-| Dynamic PWSH - ATT&CK Tags       | Hamming  | 0.00   | 0.85    |
-| Dynamic PWSH - Triggered Rules   | Micro-F1 | 1.00   | 0.50    |
-| Dynamic PWSH - Triggered Rules   | Macro-F1 | 1.00   | 0.50    |
-| Dynamic PWSH - Triggered Rules   | Jaccard  | 1.00   | 0.33    |
-| Dynamic PWSH - Triggered Rules   | Hamming  | 0.00   | 0.67    |
+- Script brevi: 28 (meno di 10 righe)
+- Script lunghi: 22 (10 righe o piu)
 
-#### Privilege Escalation - example_351
+Le analisi sono state condotte sia in forma aggregata (globale) sia disaggregata (per categoria e lunghezza), per evidenziare meglio punti di forza e criticita delle diverse architetture.
 
-| Blocco                           | Metrica  | Static | Dynamic |
-|----------------------------------|----------|--------|---------|
-| Semantic - ATT&CK Tags           | Micro-F1 | 0.00   | 0.92    |
-| Semantic - ATT&CK Tags           | Macro-F1 | 0.00   | 0.86    |
-| Semantic - ATT&CK Tags           | Jaccard  | 0.00   | 0.86    |
-| Semantic - ATT&CK Tags           | Hamming  | 1.00   | 0.14    |
-| Semantic - Triggered Rules       | Micro-F1 | 0.00   | 0.67    |
-| Semantic - Triggered Rules       | Macro-F1 | 0.00   | 0.50    |
-| Semantic - Triggered Rules       | Jaccard  | 0.00   | 0.50    |
-| Semantic - Triggered Rules       | Hamming  | 1.00   | 0.50    |
-| Dynamic Sysmon - ATT&CK Tags     | Micro-F1 | 0.50   | 1.00    |
-| Dynamic Sysmon - ATT&CK Tags     | Macro-F1 | 0.33   | 1.00    |
-| Dynamic Sysmon - ATT&CK Tags     | Jaccard  | 0.33   | 1.00    |
-| Dynamic Sysmon - ATT&CK Tags     | Hamming  | 0.67   | 0.00    |
-| Dynamic Sysmon - Triggered Rules | Micro-F1 | 0.40   | 1.00    |
-| Dynamic Sysmon - Triggered Rules | Macro-F1 | 0.25   | 1.00    |
-| Dynamic Sysmon - Triggered Rules | Jaccard  | 0.25   | 1.00    |
-| Dynamic Sysmon - Triggered Rules | Hamming  | 0.75   | 0.00    |
-| Dynamic PWSH - ATT&CK Tags       | Micro-F1 | 0.33   | 0.92    |
-| Dynamic PWSH - ATT&CK Tags       | Macro-F1 | 0.20   | 0.86    |
-| Dynamic PWSH - ATT&CK Tags       | Jaccard  | 0.20   | 0.86    |
-| Dynamic PWSH - ATT&CK Tags       | Hamming  | 0.80   | 0.14    |
-| Dynamic PWSH - Triggered Rules   | Micro-F1 | 0.40   | 0.60    |
-| Dynamic PWSH - Triggered Rules   | Macro-F1 | 0.25   | 0.43    |
-| Dynamic PWSH - Triggered Rules   | Jaccard  | 0.25   | 0.43    |
-| Dynamic PWSH - Triggered Rules   | Hamming  | 0.75   | 0.57    |
+## Metriche Utilizzate
+
+Le metriche seguono tre livelli complementari.
+
+### 1) Code Similarity
+
+- `CrystalBLEU`: variante di BLEU per code generation che riduce il peso degli n-grammi banali e valorizza quelli distintivi, migliorando la misura della similarita logico-strutturale.
+- `METEOR / METEOR-L`: misura più flessibile del matching esatto; cattura meglio equivalenze funzionali anche con piccole variazioni lessicali o di forma.
+- `chrF`: similarità a livello di carattere; utile per codice e naming tecnico, dove minime variazioni sintattiche possono alterare i token ma non sempre la vicinanza morfologica.
+
+### 2) Analisi statica
+
+- `Single Syntax Accuracy`: percentuale di script generati senza errori di parsing.
+- `Comparative Syntax Accuracy`: accuratezza sintattica contestualizzata rispetto alla Ground Truth, considerando solo errori nuovi introdotti dal generato.
+
+Queste metriche sono basate su `PSScriptAnalyzer` e si concentrano sui `ParseError`.
+
+### 3) Analisi dinamica
+
+La valutazione runtime confronta il comportamento atteso e osservato (regole Sigma e tag MITRE ATT&CK estratti dai log), con metriche multi-label:
+
+- `Exact Match Ratio (EMR)`: quota di campioni con match perfetto tra set atteso e set osservato.
+- `Mean Jaccard Index`: sovrapposizione media tra insiemi attesi e osservati.
+- `Sorensen-Dice Coefficient`: similarita insiemistica che premia maggiormente l'intersezione.
+- `Mean Symmetric Difference`: numero medio di differenze tra i due insiemi.
+
+## Componenti Deprecati
+
+> [!WARNING]
+> I seguenti percorsi sono deprecati dal 22 marzo 2026 e non sono piu mantenuti.
+> Usare solo per storico/riproducibilità.
+
+- [evaluation_metrics/README.md](evaluation_metrics/README.md)
+- [pssai_full_automation_dynamic_analysis/code/README.md](pssai_full_automation_dynamic_analysis/code/README.md)
+- [pssai_full_automation_static_analysis/code/README.md](pssai_full_automation_static_analysis/code/README.md)
 
 ## Tecniche utilizzate
 
 - **Multi-Agent** con ruoli distinti (Planner, Coder, Reviewer, Change Planner, Aligner).
 - **Chain-of-Thought** per la pianificazione strutturata.
-- **Self-Evaluation Loop** con PSScriptAnalyzer e PSandman (Dynamic Analysis)
+- **Self-Evaluation Loop** con gate di validazione e cicli iterativi di fix.
+- **Ablation Study** per misurare il contributo dei singoli moduli (`no_static`, `no_dynamic`, `no_judger`).
+- **Validazione comportamentale in sandbox** tramite `psandman` e analisi dei log runtime.
+- **Valutazione multi-label** su regole Sigma e tag MITRE ATT&CK estratti dai log.
+- **Analisi statica automatica** con `PSScriptAnalyzer` e metriche di correttezza sintattica.
+- **Osservabilita del workflow** con tracciamento di transizioni, tempi e output (`observability_*.json`).
 - **Human-in-the-Loop** per raffinamento manuale.
-- **Metriche di qualita** per confronto quantitativo tra codice reale e generato.
+
+## Licenze
+
+- Codice sorgente: [MIT License](LICENSE)
 
 ## Note
 
-Questo progetto e rilasciato per scopi di ricerca e sperimentazione accademica.
-Non utilizzare per la generazione automatica di codice malevolo o potenzialmente pericoloso.
+Progetto sviluppato per attivita di ricerca e sperimentazione accademica.
+Non usare per generare o automatizzare codice malevolo.
